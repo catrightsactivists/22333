@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黑水庄园的秘密</title>
+    <style>
+        /* 基础样式 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Times New Roman', serif;
+            background-color: black;
+            color: #e0d3b8;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            cursor: default;
+        }
+
+        /* 开场动画 - 眼皮 */
+        #eyelid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 100;
+            animation: blink 4s ease-in-out forwards;
+        }
+
+        @keyframes blink {
+            0% { height: 100%; }
+            20% { height: 0%; } /* 睁开 */
+            40% { height: 0%; } /* 保持睁开 */
+            60% { height: 100%; } /* 闭上 */
+            80% { height: 100%; } /* 保持闭上 */
+            100% { height: 0%; } /* 最终睁开 */
+        }
+
+        /* 开场文字 */
+        #opening-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8em;
+            text-align: center;
+            opacity: 0;
+            z-index: 99;
+            text-shadow: 0 0 10px rgba(224, 211, 184, 0.7);
+            animation: fadeInOut 7s ease-in-out forwards;
+            animation-delay: 1s;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* 大厅视图 */
+        #hall-view {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #2a1f1a;
+        }
+
+        /* 墙的热点区域 */
+        .wall-hotspot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0);
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .wall-hotspot:hover {
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+
+        /* 特写视图 */
+        #closeup-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #2a1f1a;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #closeup-view.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* 返回按钮 */
+        #return-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: rgba(90, 70, 50, 0.7);
+            color: #e0d3b8;
+            border: 1px solid #e0d3b8;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            font-family: inherit;
+        }
+
+        #return-button:hover {
+            background-color: rgba(120, 90, 60, 0.9);
+        }
+
+        #closeup-view.active #return-button {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- 开场动画：眨眼 -->
+        <div id="eyelid"></div>
+        <div id="opening-text">你在一个陌生的书房中醒来，请尝试探索整个房间，找回丢失的记忆</div>
+        
+        <!-- 大厅全景视图 -->
+        <div id="hall-view">
+            <!-- 热点区域将通过JavaScript动态生成 -->
+        </div>
+
+        <!-- 墙面特写视图 -->
+        <div id="closeup-view">
+            <button id="return-button">← 返回大厅</button>
+            <!-- 特写内容将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // 大厅图片路径 - 请确保图片文件与此HTML文件在同一目录下，或修改为正确路径
+        const hallImageUrl = '微信图片_20251116005419_240_549.jpg';
+
+        // 墙面配置数据
+        const walls = [
+            { id: 'greed', name: '【贪】之墙 · 祭坛之门', hint: '一扇带有七个锁孔的黄铜大门' },
+            { id: 'hatred', name: '【嗔】之墙 · 血谱密语', hint: '一份被污损的家族树' },
+            { id: 'ignorance', name: '【痴】之墙 · 扭曲的信仰', hint: '炼金术工作台与手稿' },
+            { id: 'arrogance', name: '【慢】之墙 · 傲慢的壁垒', hint: '以庄园为中心的世界地图' },
+            { id: 'doubt', name: '【疑】之墙 · 传承的裂痕', hint: '家主的书桌与档案' },
+            { id: 'jump', name: '【跳跃】之墙', hint: '一幅巨大的古典油画' }
+        ];
+
+        // 初始化函数
+        function initGame() {
+            const hallView = document.getElementById('hall-view');
+            const closeupView = document.getElementById('closeup-view');
+            const returnButton = document.getElementById('return-button');
+
+            // 设置大厅背景图
+            hallView.style.backgroundImage = `url('${hallImageUrl}')`;
+
+            // 动态创建热点区域
+            walls.forEach((wall, index) => {
+                const hotspot = document.createElement('div');
+                hotspot.className = 'wall-hotspot';
+                hotspot.dataset.wallId = wall.id;
+                
+                // 设置热点位置和大小 - 这里需要根据您的图片调整坐标
+                // 这是一个示例坐标，您需要根据实际图片调整
+                const hotspotConfig = [
+                    { left: '35%', top: '10%', width: '30%', height: '25%' },   // 上
+                    { left: '65%', top: '35%', width: '30%', height: '25%' },   // 右上
+                    { left: '65%', top: '60%', width: '30%', height: '25%' },   // 右下
+                    { left: '35%', top: '75%', width: '30%', height: '25%' },   // 下
+                    { left: '5%', top: '60%', width: '30%', height: '25%' },    // 左下
+                    { left: '5%', top: '35%', width: '30%', height: '25%' }     // 左上
+                ];
+
+                const config = hotspotConfig[index];
+                hotspot.style.left = config.left;
+                hotspot.style.top = config.top;
+                hotspot.style.width = config.width;
+                hotspot.style.height = config.height;
+
+                hotspot.addEventListener('click', () => {
+                    showCloseup(wall);
+                });
+
+                // 悬停提示
+                hotspot.title = wall.hint;
+
+                hallView.appendChild(hotspot);
+            });
+
+            // 返回按钮事件
+            returnButton.addEventListener('click', () => {
+                closeupView.classList.remove('active');
+                setTimeout(() => {
+                    hallView.style.opacity = 1;
+                }, 500);
+            });
+
+            // 开场动画结束后显示大厅
+            setTimeout(() => {
+                hallView.style.opacity = 1;
+            }, 8000); // 这个时间要与CSS动画总时长匹配
+        }
+
+        // 显示特写视图
+        function showCloseup(wall) {
+            const hallView = document.getElementById('hall-view');
+            const closeupView = document.getElementById('closeup-view');
+            
+            hallView.style.opacity = 0;
+            
+            // 设置特写视图内容 - 目前使用占位符
+            closeupView.innerHTML = `
+                <button id="return-button">← 返回大厅</button>
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
+                    <h2>${wall.name}</h2>
+                    <p>${wall.hint}</p>
+                    <p style="margin-top: 20px; font-style: italic; color: #a08c6c;">
+                        【这是 ${wall.name} 的特写视图】<br>
+                        （等待替换为实际图片和谜题内容）
+                    </p>
+                </div>
+            `;
+
+            // 重新绑定返回按钮事件
+            document.getElementById('return-button').addEventListener('click', () => {
+                closeupView.classList.remove('active');
+                setTimeout(() => {
+                    hallView.style.opacity = 1;
+                }, 500);
+            });
+
+            setTimeout(() => {
+                closeupView.classList.add('active');
+            }, 500);
+        }
+
+        // 页面加载完成后初始化游戏
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
