@@ -76,23 +76,59 @@
             top: 0;
             left: 0;
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             background-color: #2a1f1a;
+            transition: opacity 1.5s ease-in-out;
         }
 
-        /* 墙的热点区域 */
-        .wall-hotspot {
+        /* 圆形按钮 */
+        .circle-button {
             position: absolute;
-            background-color: rgba(255, 255, 255, 0);
-            transition: background-color 0.3s ease;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(224, 211, 184, 0.3);
+            border: 2px solid #e0d3b8;
             cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
         }
 
-        .wall-hotspot:hover {
-            background-color: rgba(255, 215, 0, 0.2);
+        .circle-button:hover {
+            background-color: rgba(224, 211, 184, 0.7);
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        .circle-button:hover::after {
+            content: attr(data-name);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #e0d3b8;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            z-index: 11;
+        }
+
+        /* 开始游戏按钮的特殊样式 */
+        #start-button {
+            background-color: rgba(107, 142, 35, 0.5);
+            border-color: #6b8e23;
+        }
+
+        #start-button:hover {
+            background-color: rgba(107, 142, 35, 0.8);
+        }
+
+        #start-button:hover::after {
+            content: "开始探索";
         }
 
         /* 特写视图 */
@@ -129,6 +165,7 @@
             opacity: 0;
             transition: opacity 0.5s ease;
             font-family: inherit;
+            z-index: 12;
         }
 
         #return-button:hover {
@@ -137,6 +174,28 @@
 
         #closeup-view.active #return-button {
             opacity: 1;
+        }
+
+        /* 特写视图内容 */
+        .closeup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .closeup-content h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .closeup-content p {
+            margin: 10px 0;
+            font-size: 1.2em;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -148,29 +207,82 @@
         
         <!-- 大厅全景视图 -->
         <div id="hall-view">
-            <!-- 热点区域将通过JavaScript动态生成 -->
+            <!-- 圆形按钮将通过JavaScript动态生成 -->
         </div>
 
         <!-- 墙面特写视图 -->
         <div id="closeup-view">
             <button id="return-button">← 返回大厅</button>
-            <!-- 特写内容将通过JavaScript动态生成 -->
+            <div class="closeup-content">
+                <!-- 特写内容将通过JavaScript动态生成 -->
+            </div>
         </div>
     </div>
 
     <script>
-        // 大厅图片路径 - 请确保图片文件与此HTML文件在同一目录下，或修改为正确路径
-        const hallImageUrl = '21880437fa7c9638d881c79f8b1ba376.jpg';
+        // 大厅图片路径
+        const hallImageUrl = '微信图片_20251116005419_240_549.jpg';
 
-        // 墙面配置数据
+        // 墙面配置数据 - 按照八边形方位
         const walls = [
-            { id: 'greed', name: '【贪】之墙 · 祭坛之门', hint: '一扇带有七个锁孔的黄铜大门' },
-            { id: 'hatred', name: '【嗔】之墙 · 血谱密语', hint: '一份被污损的家族树' },
-            { id: 'ignorance', name: '【痴】之墙 · 扭曲的信仰', hint: '炼金术工作台与手稿' },
-            { id: 'arrogance', name: '【慢】之墙 · 傲慢的壁垒', hint: '以庄园为中心的世界地图' },
-            { id: 'doubt', name: '【疑】之墙 · 传承的裂痕', hint: '家主的书桌与档案' },
-            { id: 'jump', name: '【跳跃】之墙', hint: '一幅巨大的古典油画' }
+            { 
+                id: 'desk', 
+                name: '书桌', 
+                position: 'north', // 正北方
+                description: '一张豪华的书桌，上面堆满了文件和一台老旧的录音设备。',
+                bgColor: '#3a2f2a'
+            },
+            { 
+                id: 'door', 
+                name: '大门', 
+                position: 'northwest', // 西北方
+                description: '一扇带有七个锁孔的黄铜大门，散发着神秘的气息。',
+                bgColor: '#2a3a2f'
+            },
+            { 
+                id: 'painting', 
+                name: '油画', 
+                position: 'northeast', // 东北方
+                description: '一幅巨大的古典油画，描绘着圣水传说的场景。',
+                bgColor: '#2f2a3a'
+            },
+            { 
+                id: 'map', 
+                name: '地图', 
+                position: 'east', // 正东方
+                description: '一张巨大的世界地图，庄园被夸张地标记在中心位置。',
+                bgColor: '#3a3a2a'
+            },
+            { 
+                id: 'family-tree', 
+                name: '家族树', 
+                position: 'southeast', // 东南方
+                description: '一幅被污损的家族树挂画，记录着这个家族的兴衰历史。',
+                bgColor: '#2a3a3a'
+            },
+            { 
+                id: 'potion-table', 
+                name: '魔药桌子', 
+                position: 'south', // 正南方
+                description: '炼金术工作台，上面摆满了各种奇怪的仪器和药剂。',
+                bgColor: '#3a2a3a'
+            }
         ];
+
+        // 八边形方位坐标计算（百分比）
+        function getPositionCoordinates(position) {
+            const coordinates = {
+                north:      { x: 50,  y: 10  },  // 正北
+                northeast:  { x: 80,  y: 20  },  // 东北
+                east:       { x: 90,  y: 50  },  // 正东
+                southeast:  { x: 80,  y: 80  },  // 东南
+                south:      { x: 50,  y: 90  },  // 正南
+                southwest:  { x: 20,  y: 80  },  // 西南
+                west:       { x: 10,  y: 50  },  // 正西
+                northwest:  { x: 20,  y: 20  }   // 西北
+            };
+            return coordinates[position] || { x: 50, y: 50 };
+        }
 
         // 初始化函数
         function initGame() {
@@ -181,38 +293,16 @@
             // 设置大厅背景图
             hallView.style.backgroundImage = `url('${hallImageUrl}')`;
 
-            // 动态创建热点区域
-            walls.forEach((wall, index) => {
-                const hotspot = document.createElement('div');
-                hotspot.className = 'wall-hotspot';
-                hotspot.dataset.wallId = wall.id;
-                
-                // 设置热点位置和大小 - 这里需要根据您的图片调整坐标
-                // 这是一个示例坐标，您需要根据实际图片调整
-                const hotspotConfig = [
-                    { left: '35%', top: '10%', width: '30%', height: '25%' },   // 上
-                    { left: '65%', top: '35%', width: '30%', height: '25%' },   // 右上
-                    { left: '65%', top: '60%', width: '30%', height: '25%' },   // 右下
-                    { left: '35%', top: '75%', width: '30%', height: '25%' },   // 下
-                    { left: '5%', top: '60%', width: '30%', height: '25%' },    // 左下
-                    { left: '5%', top: '35%', width: '30%', height: '25%' }     // 左上
-                ];
-
-                const config = hotspotConfig[index];
-                hotspot.style.left = config.left;
-                hotspot.style.top = config.top;
-                hotspot.style.width = config.width;
-                hotspot.style.height = config.height;
-
-                hotspot.addEventListener('click', () => {
-                    showCloseup(wall);
-                });
-
-                // 悬停提示
-                hotspot.title = wall.hint;
-
-                hallView.appendChild(hotspot);
-            });
+            // 创建开始游戏按钮（西南方沙发）
+            const startButton = document.createElement('div');
+            startButton.className = 'circle-button';
+            startButton.id = 'start-button';
+            const startPos = getPositionCoordinates('southwest');
+            startButton.style.left = startPos.x + '%';
+            startButton.style.top = startPos.y + '%';
+            
+            startButton.addEventListener('click', startExploration);
+            hallView.appendChild(startButton);
 
             // 返回按钮事件
             returnButton.addEventListener('click', () => {
@@ -225,28 +315,58 @@
             // 开场动画结束后显示大厅
             setTimeout(() => {
                 hallView.style.opacity = 1;
-            }, 8000); // 这个时间要与CSS动画总时长匹配
+            }, 8000);
+        }
+
+        // 开始探索函数
+        function startExploration() {
+            const hallView = document.getElementById('hall-view');
+            const startButton = document.getElementById('start-button');
+            
+            // 移除开始按钮
+            if (startButton) {
+                startButton.remove();
+            }
+
+            // 创建所有墙面按钮
+            walls.forEach(wall => {
+                const button = document.createElement('div');
+                button.className = 'circle-button';
+                button.dataset.wallId = wall.id;
+                button.setAttribute('data-name', wall.name);
+                
+                const pos = getPositionCoordinates(wall.position);
+                button.style.left = pos.x + '%';
+                button.style.top = pos.y + '%';
+
+                button.addEventListener('click', () => {
+                    showCloseup(wall);
+                });
+
+                hallView.appendChild(button);
+            });
         }
 
         // 显示特写视图
         function showCloseup(wall) {
             const hallView = document.getElementById('hall-view');
             const closeupView = document.getElementById('closeup-view');
+            const closeupContent = closeupView.querySelector('.closeup-content');
             
             hallView.style.opacity = 0;
             
-            // 设置特写视图内容 - 目前使用占位符
-            closeupView.innerHTML = `
-                <button id="return-button">← 返回大厅</button>
-                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
-                    <h2>${wall.name}</h2>
-                    <p>${wall.hint}</p>
-                    <p style="margin-top: 20px; font-style: italic; color: #a08c6c;">
-                        【这是 ${wall.name} 的特写视图】<br>
-                        （等待替换为实际图片和谜题内容）
-                    </p>
-                </div>
+            // 设置特写视图内容
+            closeupContent.innerHTML = `
+                <h2>${wall.name}</h2>
+                <p>${wall.description}</p>
+                <p style="margin-top: 30px; font-style: italic; color: #a08c6c;">
+                    【这是 ${wall.name} 的详细视图】<br>
+                    （等待替换为实际图片和谜题内容）
+                </p>
             `;
+
+            // 设置背景色
+            closeupView.style.backgroundColor = wall.bgColor;
 
             // 重新绑定返回按钮事件
             document.getElementById('return-button').addEventListener('click', () => {
