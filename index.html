@@ -273,13 +273,13 @@
         function getPositionCoordinates(position) {
             const coordinates = {
                 north:      { x: 50,  y: 10  },  // 正北
-                northeast:  { x: 80,  y: 20  },  // 东北
+                northeast:  { x: 60,  y: 20  },  // 东北
                 east:       { x: 90,  y: 50  },  // 正东
-                southeast:  { x: 80,  y: 80  },  // 东南
+                southeast:  { x: 60,  y: 80  },  // 东南
                 south:      { x: 50,  y: 90  },  // 正南
-                southwest:  { x: 20,  y: 80  },  // 西南
+                southwest:  { x: 40,  y: 80  },  // 西南
                 west:       { x: 10,  y: 50  },  // 正西
-                northwest:  { x: 20,  y: 20  }   // 西北
+                northwest:  { x: 40,  y: 20  }   // 西北
             };
             return coordinates[position] || { x: 50, y: 50 };
         }
