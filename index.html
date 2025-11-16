@@ -290,9 +290,9 @@
                 background: IMAGES.FAMILY_TREE,
                 interactions: [
                     {
-                        type: 'clickable',
+                        type: 'puzzle',
                         element: '<div class="interactive-element" style="width: 40px; height: 40px; top: 45%; left: 40%; background-color: rgba(178, 34, 34, 0.5); border-radius: 50%;"></div>',
-                        action: () => showMessage('被划掉的名字', '这个家族成员在25岁时突然死亡，死因不明...')
+                        action: () =>showFamilyTreePuzzle()
                     }
                 ]
             },
@@ -1212,7 +1212,143 @@ function showMapMessage(message, type) {
             ${message}
         </div>
     `;
+}// ==================== 家族树页面 ====================
+function showFamilyTreePuzzle() {
+    const familyTreeHTML = `
+        <div class="door-interface" style="max-width: 800px;">
+            <div class="door-title">黑水家族谱系</div>
+            <div class="door-subtitle">被诅咒的血脉，被掩盖的真相</div>
+            
+            <!-- 家族树图表 -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 30px 0; padding: 20px; background: rgba(139, 69, 19, 0.1); border-radius: 10px; border: 2px solid #8b4513;">
+                <!-- 第一代 -->
+                <div class="family-member" onclick="examineMember('founder')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.3); border-radius: 5px; cursor: pointer;">
+                    <div>🕴️</div>
+                    <div>埃德蒙·黑水</div>
+                    <div style="font-size: 0.8em;">1640-1675</div>
+                </div>
+                
+                <!-- 第二代 -->
+                <div class="family-member" onclick="examineMember('son1')" style="grid-column: 1; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.2); border-radius: 5px; cursor: pointer;">
+                    <div>👨</div>
+                    <div>威廉·黑水</div>
+                    <div style="font-size: 0.8em;">1660-1690</div>
+                </div>
+                
+                <div class="family-member" onclick="examineMember('son2')" style="grid-column: 3; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.2); border-radius: 5px; cursor: pointer;">
+                    <div>👨</div>
+                    <div>托马斯·黑水</div>
+                    <div style="font-size: 0.8em;">1662-1720</div>
+                </div>
+                
+                <!-- 第三代 -->
+                <div class="family-member" onclick="examineMember('grandson1')" style="grid-column: 1; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.15); border-radius: 5px; cursor: pointer;">
+                    <div>🧑</div>
+                    <div>亨利·黑水</div>
+                    <div style="font-size: 0.8em;">1685-1710</div>
+                </div>
+                
+                <div class="family-member" onclick="examineMember('grandson2')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.15); border-radius: 5px; cursor: pointer;">
+                    <div>🧑</div>
+                    <div>查尔斯·黑水</div>
+                    <div style="font-size: 0.8em;">1688-1745</div>
+                </div>
+                
+                <div class="family-member" onclick="examineMember('grandson3')" style="grid-column: 3; text-align: center; padding: 10px; background: rgba(178, 34, 34, 0.3); border-radius: 5px; cursor: pointer; text-decoration: line-through;">
+                    <div>💀</div>
+                    <div>亚瑟·黑水</div>
+                    <div style="font-size: 0.8em;">1690-1715</div>
+                </div>
+                
+                <!-- 第四代 -->
+                <div class="family-member" onclick="examineMember('greatgrandson')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.1); border-radius: 5px; cursor: pointer;">
+                    <div>👦</div>
+                    <div>爱德华·黑水</div>
+                    <div style="font-size: 0.8em;">1710-1780</div>
+                </div>
+                
+                <!-- 第五代 -->
+                <div class="family-member" onclick="examineMember('blind')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(106, 90, 205, 0.3); border-radius: 5px; cursor: pointer;">
+                    <div>👁️</div>
+                    <div>伊桑·黑水</div>
+                    <div style="font-size: 0.8em;">1735-???</div>
+                </div>
+            </div>
+            
+            <!-- 控制按钮 -->
+            <div class="controls-container">
+                <button class="door-button" onclick="analyzePattern()">分析死亡模式</button>
+                <button class="door-button" onclick="checkBloodline()">检查血脉纯度</button>
+                <button class="door-button" onclick="findSecrets()">寻找隐藏信息</button>
+            </div>
+            
+            <!-- 信息显示区域 -->
+            <div id="family-message" style="min-height: 60px; margin-top: 20px;"></div>
+            
+            <div class="hint-text">点击家族成员查看详细信息</div>
+        </div>
+    `;
+    
+    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', familyTreeHTML);
 }
+
+// 查看家族成员信息
+function examineMember(memberId) {
+    const messages = {
+        'founder': '家族创始人埃德蒙·黑水。记录显示他在35岁时突然暴富，同年建立了这座庄园。',
+        'son1': '长子威廉，30岁时神秘死亡。尸体被发现时面容如20岁青年。',
+        'son2': '次子托马斯，活了58岁，是早期家族中最长寿者。但晚年陷入疯狂。',
+        'grandson1': '亨利，25岁死亡。死因记录为"意外"，但细节被涂改。',
+        'grandson2': '查尔斯，57岁死亡。开始出现严重的遗传疾病。',
+        'grandson3': '亚瑟，25岁被从族谱中划去。据说他试图揭露家族秘密。',
+        'greatgrandson': '爱德华，70岁死亡。开始实行严格的近亲通婚政策。',
+        'blind': '伊桑，第五代。天生失明，但据说他能"看见"别人看不见的东西。被家族流放。'
+    };
+    
+    const messageArea = document.getElementById('family-message');
+    messageArea.innerHTML = `<div class="success-message">${messages[memberId]}</div>`;
+}
+
+// 分析死亡模式
+function analyzePattern() {
+    const messageArea = document.getElementById('family-message');
+    messageArea.innerHTML = `
+        <div class="error-message">
+            <strong>死亡模式分析：</strong><br>
+            • 35%的家族成员在25-30岁死亡<br>
+            • 死亡原因大多记录模糊<br>
+            • 尸体普遍保持年轻状态<br>
+            • 这与"圣水"的副作用描述吻合
+        </div>
+    `;
+}
+
+// 检查血脉纯度  
+function checkBloodline() {
+    const messageArea = document.getElementById('family-message');
+    messageArea.innerHTML = `
+        <div class="error-message">
+            <strong>血脉纯度检查：</strong><br>
+            • 第四代开始实行堂兄妹通婚<br>
+            • 第五代出现先天性疾病<br>
+            • 近亲系数高达0.25<br>
+            • 为了保持"神圣血脉"不惜代价
+        </div>
+    `;
+}
+
+// 寻找隐藏信息
+function findSecrets() {
+    const messageArea = document.getElementById('family-message');
+    messageArea.innerHTML = `
+        <div class="success-message">
+            <strong>隐藏信息发现：</strong><br>
+            用紫外线照射族谱，发现伊桑留下的暗语：<br>
+            <em>"血脉非祝福，实为牢笼。七代之内，必遭反噬。"</em>
+        </div>
+    `;
+}
+        
         
     </script>
 </body>
