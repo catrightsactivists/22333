@@ -270,6 +270,66 @@
     margin-top: 15px;
     color: #a08c6c;
 }
+        /* 添加这些缺失的大门页面样式 */
+.locks-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.lock-slot {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #8b4513;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    background: rgba(139, 69, 19, 0.3);
+}
+
+.symbols-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.sin-symbol {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #e0d3b8;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    cursor: grab;
+    background: rgba(90, 70, 50, 0.5);
+    transition: all 0.3s ease;
+}
+
+.sin-symbol:hover {
+    transform: scale(1.1);
+    background: rgba(120, 90, 60, 0.7);
+}
+
+.sin-symbol.used {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lock-slot.filled {
+    background: rgba(107, 142, 35, 0.3);
+}
+
+.dragging {
+    opacity: 0.5;
+}
 
     </style>
 </head>
