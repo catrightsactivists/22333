@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>黑水庄园的秘密</title>
     <style>
+        /* [之前的所有CSS样式保持不变] */
         /* 基础样式 */
         body, html {
             margin: 0;
@@ -151,102 +152,191 @@
             font-style: italic;
             color: #a08c6c;
         }
+
+        /* 子页面交互元素样式 */
+        .interactive-element {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-element:hover {
+            transform: scale(1.05);
+        }
+
+        .puzzle-interface {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(42, 31, 26, 0.95);
+            padding: 30px;
+            border: 2px solid #e0d3b8;
+            border-radius: 10px;
+            min-width: 300px;
+        }
+
+        .puzzle-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #d4af37;
+        }
+
+        .puzzle-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .puzzle-button {
+            padding: 8px 16px;
+            background-color: rgba(90, 70, 50, 0.7);
+            color: #e0d3b8;
+            border: 1px solid #e0d3b8;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .puzzle-button:hover {
+            background-color: rgba(120, 90, 60, 0.9);
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
-        <!-- 开场文字 -->
         <div id="opening-text">你在一个陌生的书房中醒来，请尝试探索整个房间，找回丢失的记忆</div>
-        
-        <!-- 大厅全景视图 -->
-        <div id="hall-view">
-            <!-- 交互按钮将通过JavaScript动态生成 -->
-        </div>
-
-        <!-- 墙面特写视图 -->
+        <div id="hall-view"></div>
         <div id="closeup-view">
             <button id="return-button">← 返回大厅</button>
-            <!-- 特写内容将通过JavaScript动态生成 -->
         </div>
     </div>
 
     <script>
         // ==================== 图片配置区域 ====================
-        // 在这里添加或修改图片链接
         const IMAGES = {
-            HALL: '21880437fa7c9638d881c79f8b1ba376.jpg', // 大厅背景图
-            DESK: '', // 书桌特写图 - 在此处添加图片链接
-            DOOR: '微信图片_20251116133948_247_549.jpg', // 大门特写图 - 在此处添加图片链接
-            PAINTING: '', // 油画特写图 - 在此处添加图片链接
-            MAP: '', // 地图特写图 - 在此处添加图片链接
-            FAMILY_TREE: '', // 家族树特写图 - 在此处添加图片链接
-            POTION_TABLE: '' // 魔药桌子特写图 - 在此处添加图片链接
+            HALL: '微信图片_20251116005419_240_549.jpg',
+            DESK: '',
+            DOOR: '',
+            PAINTING: '',
+            MAP: '',
+            FAMILY_TREE: '',
+            POTION_TABLE: ''
         };
-        // ==================== 图片配置结束 ====================
 
-        // 墙面配置数据 - 按照八边形方位
+        // ==================== 子页面交互配置 ====================
+        const PAGE_INTERACTIONS = {
+            // 书桌页面交互
+            desk: {
+                background: IMAGES.DESK,
+                interactions: [
+                    {
+                        type: 'clickable',
+                        element: '<div class="interactive-element" style="width: 100px; height: 100px; top: 30%; left: 25%; background-color: rgba(139, 69, 19, 0.5); border: 2px dashed #8b4513; border-radius: 5px;"></div>',
+                        action: () => showPuzzle('书桌抽屉', '你发现了一个上锁的抽屉。需要找到钥匙才能打开。', [
+                            { text: '尝试撬开', action: () => alert('撬锁失败了！这需要专门的工具。') },
+                            { text: '寻找钥匙', action: () => alert('你决定在房间其他地方寻找钥匙。') },
+                            { text: '暂时放弃', action: () => closePuzzle() }
+                        ])
+                    },
+                    {
+                        type: 'clickable',
+                        element: '<div class="interactive-element" style="width: 80px; height: 120px; top: 45%; left: 60%; background-color: rgba(106, 90, 205, 0.5); border: 2px dashed #6a5acd; border-radius: 3px;"></div>',
+                        action: () => showMessage('你找到了一本日记', '日记中记载着家族的秘密... "那泉水并非恩赐，而是诅咒的源头..."')
+                    }
+                ]
+            },
+
+            // 大门页面交互
+            door: {
+                background: IMAGES.DOOR,
+                interactions: [
+                    {
+                        type: 'puzzle',
+                        element: '',
+                        action: () => showDoorPuzzle()
+                    }
+                ]
+            },
+
+            // 魔药桌子页面交互
+            'potion-table': {
+                background: IMAGES.POTION_TABLE,
+                interactions: [
+                    {
+                        type: 'clickable',
+                        element: '<div class="interactive-element" style="width: 60px; height: 80px; top: 40%; left: 40%; background-color: rgba(50, 205, 50, 0.3); border: 2px dashed #32cd32; border-radius: 8px;"></div>',
+                        action: () => showMessage('炼金术手稿', '《翠玉之秘》："取处女地之泪，以不灭之火慢炖，直至蒸去其形，独留其魂..."')
+                    },
+                    {
+                        type: 'clickable',
+                        element: '<div class="interactive-element" style="width: 40px; height: 40px; top: 60%; left: 70%; background-color: rgba(255, 215, 0, 0.4); border-radius: 50%;"></div>',
+                        action: () => showMessage('神秘药剂', '瓶中残留着发出幽绿光芒的液体。你感受到一股奇异的能量。')
+                    }
+                ]
+            }
+
+            // 可以为其他页面继续添加交互配置...
+        };
+
+        // ==================== 墙面配置 ====================
         const walls = [
             { 
                 id: 'desk', 
                 name: '书桌', 
                 hint: '家主的书桌与档案',
-                position: 'north', // 正北
-                tooltipPos: 'bottom',
-                image: IMAGES.DESK
+                position: 'north',
+                tooltipPos: 'bottom'
             },
             { 
                 id: 'door', 
                 name: '大门', 
                 hint: '一扇带有七个锁孔的黄铜大门',
-                position: 'northwest', // 西北
-                tooltipPos: 'bottom-right',
-                image: IMAGES.DOOR
+                position: 'northwest',
+                tooltipPos: 'bottom-right'
             },
             { 
                 id: 'painting', 
                 name: '油画', 
                 hint: '一幅巨大的古典油画',
-                position: 'northeast', // 东北
-                tooltipPos: 'bottom-left',
-                image: IMAGES.PAINTING
+                position: 'northeast',
+                tooltipPos: 'bottom-left'
             },
             { 
                 id: 'map', 
                 name: '地图', 
                 hint: '以庄园为中心的世界地图',
-                position: 'east', // 正东
-                tooltipPos: 'left',
-                image: IMAGES.MAP
+                position: 'east',
+                tooltipPos: 'left'
             },
             { 
                 id: 'family-tree', 
                 name: '家族树', 
                 hint: '一份被污损的家族谱系',
-                position: 'southeast', // 东南
-                tooltipPos: 'top-left',
-                image: IMAGES.FAMILY_TREE
+                position: 'southeast',
+                tooltipPos: 'top-left'
             },
             { 
                 id: 'potion-table', 
                 name: '魔药桌子', 
                 hint: '炼金术工作台与手稿',
-                position: 'south', // 正南
-                tooltipPos: 'top',
-                image: IMAGES.POTION_TABLE
+                position: 'south',
+                tooltipPos: 'top'
             },
             { 
                 id: 'start', 
                 name: '开始游戏', 
                 hint: '点击这里开始探索',
-                position: 'southwest', // 西南 - 沙发位置
+                position: 'southwest',
                 tooltipPos: 'top-right',
                 isStart: true
             }
         ];
 
-        // 方位坐标计算 (八边形，半径40%)
+        // ==================== 工具函数 ====================
         function getPosition(position) {
-            const radius = 40; // 距离中心的百分比
+            const radius = 40;
             switch(position) {
                 case 'north': return { x: 50, y: 50 - radius };
                 case 'northeast': return { x: 50 + radius * 0.707, y: 50 - radius * 0.707 };
@@ -260,7 +350,6 @@
             }
         }
 
-        // 工具提示位置
         function getTooltipPosition(tooltipPos) {
             switch(tooltipPos) {
                 case 'top': return { top: '-40px', left: '50%', transform: 'translateX(-50%)' };
@@ -275,16 +364,47 @@
             }
         }
 
-        // 初始化函数
+        // ==================== 交互功能函数 ====================
+        function showPuzzle(title, description, buttons) {
+            const puzzleHTML = `
+                <div class="puzzle-interface">
+                    <div class="puzzle-title">${title}</div>
+                    <div>${description}</div>
+                    <div class="puzzle-controls">
+                        ${buttons.map(btn => 
+                            `<button class="puzzle-button" onclick="${btn.action}">${btn.text}</button>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            document.getElementById('closeup-view').insertAdjacentHTML('beforeend', puzzleHTML);
+        }
+
+        function closePuzzle() {
+            const puzzles = document.querySelectorAll('.puzzle-interface');
+            puzzles.forEach(puzzle => puzzle.remove());
+        }
+
+        function showMessage(title, message) {
+            alert(`${title}\n\n${message}`);
+        }
+
+        function showDoorPuzzle() {
+            showPuzzle('七重锁钥', '门上有七个锁孔，每个都对应着不同的罪孽符号。你需要找到正确的开启顺序。', [
+                { text: '检查锁孔', action: () => showMessage('锁孔检查', '七个锁孔排列成奇特的图案：傲慢、嫉妒、愤怒、懒惰、贪婪、暴食、色欲。') },
+                { text: '尝试开锁', action: () => showMessage('开锁尝试', '你需要先在其他地方找到开锁的线索。') },
+                { text: '放弃', action: () => closePuzzle() }
+            ]);
+        }
+
+        // ==================== 主要游戏函数 ====================
         function initGame() {
             const hallView = document.getElementById('hall-view');
             const closeupView = document.getElementById('closeup-view');
             const returnButton = document.getElementById('return-button');
 
-            // 设置大厅背景图
             hallView.style.backgroundImage = `url('${IMAGES.HALL}')`;
 
-            // 动态创建交互按钮
             walls.forEach(wall => {
                 const dot = document.createElement('div');
                 dot.className = 'interaction-dot';
@@ -294,7 +414,6 @@
                 dot.style.left = `${pos.x}%`;
                 dot.style.top = `${pos.y}%`;
 
-                // 添加工具提示
                 const tooltip = document.createElement('div');
                 tooltip.className = 'dot-tooltip';
                 tooltip.textContent = wall.name;
@@ -306,22 +425,18 @@
 
                 dot.appendChild(tooltip);
 
-                // 点击事件
                 dot.addEventListener('click', (event) => {
                     event.stopPropagation();
                     if (wall.isStart) {
-                        // 开始游戏按钮：隐藏自己，显示其他按钮
                         dot.style.display = 'none';
                         document.querySelectorAll('.interaction-dot:not([data-wall-id="start"])').forEach(otherDot => {
                             otherDot.style.display = 'block';
                         });
                     } else {
-                        // 其他按钮：显示特写视图
                         showCloseup(wall);
                     }
                 });
 
-                // 初始状态：只有开始游戏按钮可见
                 if (!wall.isStart) {
                     dot.style.display = 'none';
                 }
@@ -329,7 +444,6 @@
                 hallView.appendChild(dot);
             });
 
-            // 返回按钮事件
             returnButton.addEventListener('click', () => {
                 closeupView.classList.remove('active');
                 setTimeout(() => {
@@ -337,47 +451,61 @@
                 }, 500);
             });
 
-            // 开场动画结束后显示大厅
             setTimeout(() => {
                 hallView.style.opacity = 1;
             }, 6000);
         }
 
-        // 显示特写视图
         function showCloseup(wall) {
             const hallView = document.getElementById('hall-view');
             const closeupView = document.getElementById('closeup-view');
             
             hallView.style.opacity = 0;
             
-            // 设置特写视图内容
-            let closeupContent = '';
+            // 清空之前的交互元素
+            closeupView.innerHTML = '<button id="return-button">← 返回大厅</button>';
             
-            if (wall.image) {
-                // 如果有特写图片，显示图片
-                closeupContent = `
-                    <div style="width:100%; height:100%; background-image:url('${wall.image}'); background-size:contain; background-repeat:no-repeat; background-position:center;"></div>
-                `;
+            // 获取该页面的交互配置
+            const pageConfig = PAGE_INTERACTIONS[wall.id];
+            
+            if (pageConfig) {
+                // 设置背景图片
+                if (pageConfig.background) {
+                    closeupView.style.backgroundImage = `url('${pageConfig.background}')`;
+                }
+                
+                // 添加交互元素
+                pageConfig.interactions.forEach(interaction => {
+                    if (interaction.element) {
+                        closeupView.insertAdjacentHTML('beforeend', interaction.element);
+                    }
+                    
+                    // 为交互元素绑定事件
+                    if (interaction.type === 'clickable') {
+                        const elements = closeupView.querySelectorAll('.interactive-element');
+                        const lastElement = elements[elements.length - 1];
+                        if (lastElement) {
+                            lastElement.addEventListener('click', interaction.action);
+                        }
+                    } else if (interaction.type === 'puzzle') {
+                        // 立即执行谜题功能
+                        interaction.action();
+                    }
+                });
             } else {
-                // 如果没有图片，显示占位文字
-                closeupContent = `
+                // 默认显示
+                closeupView.innerHTML += `
                     <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
                         <h2>${wall.name}</h2>
                         <p>${wall.hint}</p>
                         <p style="margin-top: 20px; font-style: italic; color: #a08c6c;">
                             【这是 ${wall.name} 的特写视图】<br>
-                            （等待添加特写图片）
+                            ${wall.image ? '' : '（等待添加特写图片和互动内容）'}
                         </p>
                     </div>
                 `;
             }
 
-            closeupView.innerHTML = `
-                <button id="return-button">← 返回大厅</button>
-                ${closeupContent}
-            `;
-
-            // 重新绑定返回按钮事件
             document.getElementById('return-button').addEventListener('click', () => {
                 closeupView.classList.remove('active');
                 setTimeout(() => {
@@ -390,7 +518,6 @@
             }, 500);
         }
 
-        // 页面加载完成后初始化游戏
         window.addEventListener('load', initGame);
     </script>
 </body>
