@@ -302,14 +302,8 @@
                 background: IMAGES.POTION_TABLE,
                 interactions: [
                     {
-                        type: 'clickable',
-                        element: '<div class="interactive-element" style="width: 60px; height: 80px; top: 40%; left: 40%; background-color: rgba(50, 205, 50, 0.3); border: 2px dashed #32cd32; border-radius: 8px;"></div>',
-                        action: () => showMessage('炼金术手稿', '《翠玉之秘》："取处女地之泪，以不灭之火慢炖，直至蒸去其形，独留其魂..."')
-                    },
-                    {
-                        type: 'clickable',
-                        element: '<div class="interactive-element" style="width: 40px; height: 40px; top: 60%; left: 70%; background-color: rgba(255, 215, 0, 0.4); border-radius: 50%;"></div>',
-                        action: () => showMessage('神秘药剂', '瓶中残留着发出幽绿光芒的液体。你感受到一股奇异的能量。')
+                    type: 'puzzle', 
+                action: () => showPotionPuzzle()
                     }
                 ]
             }
@@ -1348,6 +1342,241 @@ function findSecrets() {
         </div>
     `;
 }
+        // ==================== 魔药桌子页面 ====================
+function showPotionPuzzle() {
+    const potionHTML = `
+        <div class="door-interface">
+            <div class="door-title">炼金术工作台</div>
+            <div class="door-subtitle">"翠玉之秘" - 圣水的炼制</div>
+            
+            <div style="margin: 20px 0; text-align: left;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                    <div>
+                        <h3 style="color: #d4af37; margin-bottom: 10px;">原料区</h3>
+                        <div class="ingredient" onclick="selectIngredient('泉水')">
+                            💧 处女地之泪 (泉水)
+                        </div>
+                        <div class="ingredient" onclick="selectIngredient('矿石')">
+                            ⚪ 月光石粉末
+                        </div>
+                        <div class="ingredient" onclick="selectIngredient('植物')">
+                            🌿 夜光蘑菇
+                        </div>
+                        <div class="ingredient" onclick="selectIngredient('特殊')">
+                            🔥 地心之火种
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="color: #d4af37; margin-bottom: 10px;">炼制步骤</h3>
+                        <div id="potion-steps">
+                            <div class="step">1. 选择基础原料</div>
+                            <div class="step">2. 添加催化剂</div>
+                            <div class="step">3. 控制火候</div>
+                            <div class="step">4. 完成炼制</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <div id="cauldron" style="border: 2px solid #8b4513; padding: 15px; min-height: 80px; border-radius: 10px; background: rgba(139, 69, 19, 0.2);">
+                        <div id="potion-content" style="text-align: center; color: #a08c6c;">
+                            坩埚空空如也...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-container">
+                <button class="door-button" onclick="startBrewing()" id="brew-btn">开始炼制</button>
+                <button class="door-button" onclick="resetPotion()">清空坩埚</button>
+                <button class="door-button" onclick="readFormula()">查看配方</button>
+            </div>
+
+            <div id="potion-message" style="min-height: 40px; margin-top: 15px;"></div>
+            <div class="hint-text" id="potion-hint">提示：正确的配方记录在炼金手稿中</div>
+        </div>
+    `;
+    
+    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', potionHTML);
+}
+
+// 魔药炼制状态
+let potionState = {
+    ingredients: [],
+    step: 0,
+    isBrewing: false
+};
+
+function selectIngredient(ingredient) {
+    if (potionState.isBrewing) {
+        showPotionMessage("正在炼制中，无法添加原料！", "error");
+        return;
+    }
+    
+    if (potionState.ingredients.length >= 3) {
+        showPotionMessage("坩埚已满，无法添加更多原料！", "error");
+        return;
+    }
+    
+    potionState.ingredients.push(ingredient);
+    updateCauldron();
+    showPotionMessage(`添加了：${ingredient}`, "success");
+}
+
+function updateCauldron() {
+    const content = document.getElementById('potion-content');
+    if (potionState.ingredients.length === 0) {
+        content.innerHTML = "坩埚空空如也...";
+        content.style.color = "#a08c6c";
+    } else {
+        const ingredientsText = potionState.ingredients.map(ing => {
+            switch(ing) {
+                case '泉水': return '💧';
+                case '矿石': return '⚪';
+                case '植物': return '🌿';
+                case '特殊': return '🔥';
+                default: return ing;
+            }
+        }).join(' + ');
+        
+        content.innerHTML = `坩埚内容：${ingredientsText}`;
+        content.style.color = "#e0d3b8";
+    }
+    
+    // 更新步骤高亮
+    updateBrewingSteps();
+}
+
+function updateBrewingSteps() {
+    const steps = document.querySelectorAll('.step');
+    steps.forEach((step, index) => {
+        if (index === potionState.step) {
+            step.style.color = "#d4af37";
+            step.style.fontWeight = "bold";
+        } else {
+            step.style.color = "#e0d3b8";
+            step.style.fontWeight = "normal";
+        }
+    });
+}
+
+function startBrewing() {
+    if (potionState.ingredients.length === 0) {
+        showPotionMessage("坩埚是空的！请先添加原料。", "error");
+        return;
+    }
+    
+    if (potionState.isBrewing) {
+        showPotionMessage("已经在炼制中了！", "error");
+        return;
+    }
+    
+    potionState.isBrewing = true;
+    const brewBtn = document.getElementById('brew-btn');
+    brewBtn.disabled = true;
+    brewBtn.textContent = "炼制中...";
+    
+    showPotionMessage("开始炼制...坩埚开始发出奇异的光芒", "success");
+    
+    // 模拟炼制过程
+    setTimeout(() => {
+        potionState.step = 1;
+        updateBrewingSteps();
+        showPotionMessage("加入催化剂...液体开始变色", "success");
+    }, 1500);
+    
+    setTimeout(() => {
+        potionState.step = 2;
+        updateBrewingSteps();
+        showPotionMessage("控制火候...液体开始沸腾", "success");
+    }, 3000);
+    
+    setTimeout(() => {
+        potionState.step = 3;
+        updateBrewingSteps();
+        checkPotionResult();
+    }, 4500);
+}
+
+function checkPotionResult() {
+    const correctRecipe = ['泉水', '植物', '特殊']; // 正确配方：泉水 + 夜光蘑菇 + 地心之火种
+    
+    const isCorrect = potionState.ingredients.length === 3 && 
+                     potionState.ingredients[0] === correctRecipe[0] &&
+                     potionState.ingredients[1] === correctRecipe[1] &&
+                     potionState.ingredients[2] === correctRecipe[2];
+    
+    const brewBtn = document.getElementById('brew-btn');
+    
+    if (isCorrect) {
+        showPotionMessage("🎉 炼制成功！获得了'翠玉圣水'！液体发出幽绿色的光芒。", "success");
+        document.getElementById('potion-content').innerHTML = "💚 翠玉圣水 - 散发着奇异的能量";
+        document.getElementById('potion-content').style.color = "#32cd32";
+    } else {
+        showPotionMessage("💥 炼制失败！液体变成了浑浊的黑色。配方似乎不对...", "error");
+        document.getElementById('potion-content').innerHTML = "⚫ 失败的药剂 - 散发着恶臭";
+        document.getElementById('potion-content').style.color = "#8b4513";
+    }
+    
+    potionState.isBrewing = false;
+    brewBtn.disabled = false;
+    brewBtn.textContent = "开始炼制";
+}
+
+function resetPotion() {
+    if (potionState.isBrewing) {
+        showPotionMessage("正在炼制中，无法清空！", "error");
+        return;
+    }
+    
+    potionState.ingredients = [];
+    potionState.step = 0;
+    updateCauldron();
+    updateBrewingSteps();
+    showPotionMessage("坩埚已清空", "error");
+    
+    const messageDiv = document.getElementById('potion-message');
+    messageDiv.innerHTML = '';
+}
+
+function readFormula() {
+    showPotionMessage(`
+        《翠玉之秘》配方：<br>
+        • 处女地之泪 (泉水) 💧<br>
+        • 夜光蘑菇 🌿<br>  
+        • 地心之火种 🔥<br><br>
+        炼制步骤必须严格按照顺序！
+    `, "success");
+}
+
+function showPotionMessage(message, type) {
+    const messageDiv = document.getElementById('potion-message');
+    messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+}
+
+// 添加CSS样式（如果还没有的话，加在<style>区域）
+/*
+.ingredient {
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: rgba(139, 69, 19, 0.3);
+    border: 1px solid #8b4513;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ingredient:hover {
+    background: rgba(139, 69, 19, 0.5);
+    transform: translateX(5px);
+}
+
+.step {
+    padding: 5px 0;
+    transition: all 0.3s ease;
+}
+*/
         
         
     </script>
