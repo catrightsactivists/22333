@@ -559,6 +559,272 @@
         }
 
         window.addEventListener('load', initGame);
+        // ==================== 大门页面数据配置 ====================
+const DOOR_CONFIG = {
+    // 七宗罪符号配置
+    sins: [
+        { id: 'pride', symbol: '🦁', name: '傲慢', latin: 'Superbia' },
+        { id: 'envy', symbol: '🦋', name: '嫉妒', latin: 'Invidia' },
+        { id: 'wrath', symbol: '🐂', name: '愤怒', latin: 'Ira' },
+        { id: 'sloth', symbol: '🦥', name: '懒惰', latin: 'Acedia' },
+        { id: 'greed', symbol: '🦊', name: '贪婪', latin: 'Avaritia' },
+        { id: 'gluttony', symbol: '🐗', name: '暴食', latin: 'Gula' },
+        { id: 'lust', symbol: '🦂', name: '色欲', latin: 'Luxuria' }
+    ],
+    // 正确的开启顺序（逆卡巴拉顺序）
+    correctOrder: ['gluttony', 'lust', 'greed', 'sloth', 'wrath', 'envy', 'pride'],
+    // 提示信息
+    hints: [
+        "提示：顺序与物质的堕落有关",
+        "提示：想想什么是'逆卡巴拉'", 
+        "提示：从最基础的欲望开始",
+        "提示：暴食 → 色欲 → 贪婪 → 懒惰 → 愤怒 → 嫉妒 → 傲慢"
+    ]
+};
+
+// ==================== 大门页面游戏状态 ====================
+let doorGameState = {
+    currentSequence: [],
+    availableSins: [...DOOR_CONFIG.sins],
+    hintsUsed: 0,
+    attempts: 0
+};
+
+// ==================== 大门页面交互函数 ====================
+function showDoorPuzzle() {
+    const doorHTML = `
+        <div class="door-interface">
+            <div class="door-title">七重锁钥</div>
+            <div class="door-subtitle">"Sicut Superius, Inferius"<br>如其在上，如其在下</div>
+            
+            <div class="locks-container" id="locks-container">
+                ${Array(7).fill(0).map((_, index) => `
+                    <div class="lock-slot" data-slot-index="${index}" onclick="placeSymbol(${index})">
+                        ${doorGameState.currentSequence[index] ? 
+                            DOOR_CONFIG.sins.find(sin => sin.id === doorGameState.currentSequence[index]).symbol : 
+                            '?'
+                        }
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="symbols-container" id="symbols-container">
+                ${doorGameState.availableSins.map(sin => `
+                    <div class="sin-symbol" draggable="true" data-sin-id="${sin.id}"
+                         onclick="selectSymbol('${sin.id}')"
+                         title="${sin.name} - ${sin.latin}">
+                        ${sin.symbol}
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="controls-container">
+                <button class="door-button" onclick="checkSequence()" 
+                        ${doorGameState.currentSequence.length !== 7 ? 'disabled' : ''}>
+                    尝试开锁
+                </button>
+                <button class="door-button" onclick="resetSequence()">重置顺序</button>
+                <button class="door-button" onclick="showHint()">
+                    提示 (${3 - doorGameState.hintsUsed}次剩余)
+                </button>
+            </div>
+
+            <div id="message-area"></div>
+            <div class="hint-text">尝试次数: ${doorGameState.attempts}</div>
+        </div>
+    `;
+
+    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', doorHTML);
+    setupDragAndDrop();
+}
+
+function setupDragAndDrop() {
+    const symbols = document.querySelectorAll('.sin-symbol');
+    const slots = document.querySelectorAll('.lock-slot');
+
+    symbols.forEach(symbol => {
+        symbol.addEventListener('dragstart', handleDragStart);
+        symbol.addEventListener('dragend', handleDragEnd);
+    });
+
+    slots.forEach(slot => {
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('drop', handleDrop);
+    });
+}
+
+function handleDragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.dataset.sinId);
+    e.target.classList.add('dragging');
+}
+
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const sinId = e.dataTransfer.getData('text/plain');
+    const slotIndex = parseInt(e.target.dataset.slotIndex);
+    placeSymbolInSlot(sinId, slotIndex);
+}
+
+function selectSymbol(sinId) {
+    const firstEmptySlot = document.querySelector('.lock-slot:not(.filled)');
+    if (firstEmptySlot) {
+        const slotIndex = parseInt(firstEmptySlot.dataset.slotIndex);
+        placeSymbolInSlot(sinId, slotIndex);
+    }
+}
+
+function placeSymbol(slotIndex) {
+    if (doorGameState.currentSequence[slotIndex]) {
+        removeSymbolFromSlot(slotIndex);
+    }
+}
+
+function placeSymbolInSlot(sinId, slotIndex) {
+    if (doorGameState.currentSequence[slotIndex]) {
+        removeSymbolFromSlot(slotIndex);
+    }
+
+    doorGameState.currentSequence[slotIndex] = sinId;
+    const sin = DOOR_CONFIG.sins.find(s => s.id === sinId);
+    
+    const slot = document.querySelector(`[data-slot-index="${slotIndex}"]`);
+    slot.innerHTML = sin.symbol;
+    slot.classList.add('filled');
+    slot.title = `${sin.name} - ${sin.latin}`;
+
+    const symbolElement = document.querySelector(`[data-sin-id="${sinId}"]`);
+    if (symbolElement) {
+        symbolElement.classList.add('used');
+        symbolElement.style.cursor = 'not-allowed';
+        symbolElement.draggable = false;
+    }
+
+    const checkButton = document.querySelector('.door-button');
+    if (doorGameState.currentSequence.filter(Boolean).length === 7) {
+        checkButton.disabled = false;
+    }
+}
+
+function removeSymbolFromSlot(slotIndex) {
+    const sinId = doorGameState.currentSequence[slotIndex];
+    if (sinId) {
+        const symbolElement = document.querySelector(`[data-sin-id="${sinId}"]`);
+        if (symbolElement) {
+            symbolElement.classList.remove('used');
+            symbolElement.style.cursor = 'grab';
+            symbolElement.draggable = true;
+        }
+
+        doorGameState.currentSequence[slotIndex] = null;
+        const slot = document.querySelector(`[data-slot-index="${slotIndex}"]`);
+        slot.innerHTML = '?';
+        slot.classList.remove('filled');
+        slot.title = '';
+
+        const checkButton = document.querySelector('.door-button');
+        checkButton.disabled = true;
+    }
+}
+
+function checkSequence() {
+    doorGameState.attempts++;
+    const currentSequence = doorGameState.currentSequence.filter(Boolean);
+    
+    if (currentSequence.length !== 7) {
+        showMessage('请填满所有七个锁孔', 'error');
+        return;
+    }
+
+    const isCorrect = currentSequence.every((sinId, index) => 
+        sinId === DOOR_CONFIG.correctOrder[index]
+    );
+
+    if (isCorrect) {
+        showMessage('成功了！大门缓缓打开...', 'success');
+        setTimeout(() => {
+            showMessage('门后是一条通往未知的通道...', 'success');
+        }, 2000);
+    } else {
+        showMessage('锁孔发出沉重的响声，但门没有打开。顺序似乎不对...', 'error');
+        const correctPositions = currentSequence.filter((sinId, index) => 
+            sinId === DOOR_CONFIG.correctOrder[index]
+        ).length;
+        showMessage(`有 ${correctPositions} 个符号在正确的位置上`, 'error');
+    }
+
+    updateAttemptsDisplay();
+}
+
+function resetSequence() {
+    doorGameState.currentSequence = [];
+    doorGameState.availableSins = [...DOOR_CONFIG.sins];
+    
+    const slots = document.querySelectorAll('.lock-slot');
+    slots.forEach(slot => {
+        slot.innerHTML = '?';
+        slot.classList.remove('filled');
+        slot.title = '';
+    });
+
+    const symbols = document.querySelectorAll('.sin-symbol');
+    symbols.forEach(symbol => {
+        symbol.classList.remove('used');
+        symbol.style.cursor = 'grab';
+        symbol.draggable = true;
+    });
+
+    const checkButton = document.querySelector('.door-button');
+    checkButton.disabled = true;
+
+    showMessage('顺序已重置', 'error');
+}
+
+function showHint() {
+    if (doorGameState.hintsUsed >= 3) {
+        showMessage('没有更多提示了', 'error');
+        return;
+    }
+
+    doorGameState.hintsUsed++;
+    const hint = DOOR_CONFIG.hints[doorGameState.hintsUsed - 1];
+    showMessage(hint, 'error');
+    
+    const hintButton = document.querySelector('.door-button:last-child');
+    hintButton.textContent = `提示 (${3 - doorGameState.hintsUsed}次剩余)`;
+    
+    if (doorGameState.hintsUsed >= 3) {
+        hintButton.disabled = true;
+    }
+}
+
+function showMessage(message, type) {
+    const messageArea = document.getElementById('message-area');
+    messageArea.innerHTML = `<div class="${type}-message">${message}</div>`;
+    
+    if (type === 'success') {
+        messageArea.classList.add('success-message');
+        messageArea.classList.remove('error-message');
+    } else {
+        messageArea.classList.add('error-message');
+        messageArea.classList.remove('success-message');
+    }
+}
+
+function updateAttemptsDisplay() {
+    const attemptsDisplay = document.querySelector('.hint-text');
+    if (attemptsDisplay) {
+        attemptsDisplay.textContent = `尝试次数: ${doorGameState.attempts}`;
+    }
+}
+        
     </script>
 </body>
 </html>
