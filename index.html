@@ -266,9 +266,9 @@
                 background: IMAGES.PAINTING,
                 interactions: [
                     {
-                        type: 'clickable',
+                        type: 'puzzle',
                         element: '<div class="interactive-element" style="width: 120px; height: 80px; top: 40%; left: 50%; background-color: rgba(255, 215, 0, 0.3); border: 2px dashed #ffd700; border-radius: 5px;"></div>',
-                        action: () => showMessage('古典油画', '这幅油画描绘了家族发现圣水的场景。画中的人物眼神似乎有些诡异...')
+                        action: () => showDoorPuzzle()
                     }
                 ]
             },
@@ -822,6 +822,156 @@ function updateAttemptsDisplay() {
     const attemptsDisplay = document.querySelector('.hint-text');
     if (attemptsDisplay) {
         attemptsDisplay.textContent = `尝试次数: ${doorGameState.attempts}`;
+    }
+}
+        // ==================== 油画页面 ====================
+function showPaintingPuzzle() {
+    const paintingHTML = `
+        <div class="door-interface">
+            <div class="door-title">神秘的古典油画</div>
+            <div class="door-subtitle">"家族发现圣水的神圣时刻"</div>
+            
+            <div class="painting-container">
+                <div class="painting-area" id="painting-area">
+                    <div class="painting-hotspot" style="top: 30%; left: 40%;" onclick="examineEyes()">
+                        👁️ 人物的眼神
+                    </div>
+                    <div class="painting-hotspot" style="top: 60%; left: 25%;" onclick="examineBottle()">
+                        🍶 圣水瓶
+                    </div>
+                    <div class="painting-hotspot" style="top: 70%; left: 65%;" onclick="examineBackground()">
+                        🏞️ 背景符号
+                    </div>
+                    <div class="painting-hotspot" style="top: 45%; left: 75%;" onclick="examineFrame()">
+                        🖼️ 画框刻文
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-container">
+                <button class="door-button" onclick="useUltraviolet()">使用紫外灯</button>
+                <button class="door-button" onclick="cleanPainting()">清理画面</button>
+                <button class="door-button" onclick="checkReflection()">检查反光</button>
+            </div>
+
+            <div id="painting-message" class="hint-text"></div>
+            <div class="hint-text">已发现线索: <span id="clue-count">0</span>/4</div>
+        </div>
+    `;
+    
+    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', paintingHTML);
+    resetPaintingState();
+}
+
+// 油画页面状态
+let paintingState = {
+    cluesFound: 0,
+    uvUsed: false,
+    cleaned: false
+};
+
+function resetPaintingState() {
+    paintingState = {
+        cluesFound: 0,
+        uvUsed: false,
+        cleaned: false
+    };
+    updateClueCount();
+}
+
+function updateClueCount() {
+    const countElement = document.getElementById('clue-count');
+    if (countElement) {
+        countElement.textContent = paintingState.cluesFound;
+    }
+}
+
+function showPaintingMessage(message, type = 'info') {
+    const messageElement = document.getElementById('painting-message');
+    if (messageElement) {
+        const color = type === 'success' ? '#6b8e23' : type === 'error' ? '#8b4513' : '#e0d3b8';
+        messageElement.innerHTML = `<div style="color: ${color}; margin: 10px 0;">${message}</div>`;
+    }
+}
+
+// 检查人物眼神
+function examineEyes() {
+    if (!paintingState.cleaned) {
+        showPaintingMessage('画面太脏了，看不清人物的眼神细节。也许需要先清理一下？', 'error');
+        return;
+    }
+    
+    showPaintingMessage('你发现画中人物的眼神异常空洞，瞳孔中似乎反射着某种几何图案...', 'success');
+    addClue();
+}
+
+// 检查圣水瓶
+function examineBottle() {
+    showPaintingMessage('圣水瓶中流动着幽绿色的液体，瓶身上刻着:"EX INFERNO AD CAELUM"（从地狱到天堂）', 'success');
+    addClue();
+}
+
+// 检查背景符号
+function examineBackground() {
+    if (!paintingState.uvUsed) {
+        showPaintingMessage('背景看起来只是普通的风景，但总觉得有些不对劲...', 'error');
+        return;
+    }
+    
+    showPaintingMessage('在紫外线下，背景显现出隐藏的符号：一个被六芒星包围的黑洞图案！', 'success');
+    addClue();
+}
+
+// 检查画框刻文
+function examineFrame() {
+    showPaintingMessage('画框内侧刻着细小的文字："他赐予生命，却索取灵魂。非恩赐，实为借贷。"', 'success');
+    addClue();
+}
+
+// 使用紫外灯
+function useUltraviolet() {
+    paintingState.uvUsed = true;
+    const paintingArea = document.getElementById('painting-area');
+    if (paintingArea) {
+        paintingArea.style.border = '3px solid #9400d3';
+        paintingArea.style.background = 'linear-gradient(45deg, #2a1f1a, #4b0082)';
+    }
+    showPaintingMessage('紫外灯下，画面显现出隐藏的细节！快去检查背景！', 'success');
+}
+
+// 清理画面
+function cleanPainting() {
+    paintingState.cleaned = true;
+    const paintingArea = document.getElementById('painting-area');
+    if (paintingArea) {
+        paintingArea.style.background = 'rgba(139, 69, 19, 0.1)';
+    }
+    showPaintingMessage('清理后，画面的细节更加清晰了！现在可以检查人物眼神了。', 'success');
+}
+
+// 检查反光
+function checkReflection() {
+    if (paintingState.cluesFound >= 3) {
+        showPaintingMessage('在特定角度下，你发现油画表面反射出书房中其他物体的影像，似乎暗示着某种联系...', 'success');
+        if (paintingState.cluesFound === 3) {
+            addClue(); // 第四个线索
+        }
+    } else {
+        showPaintingMessage('需要发现更多线索才能看出其中的规律...', 'error');
+    }
+}
+
+function addClue() {
+    if (paintingState.cluesFound < 4) {
+        paintingState.cluesFound++;
+        updateClueCount();
+        
+        if (paintingState.cluesFound === 4) {
+            showPaintingMessage('🎉 你发现了油画的所有秘密！画中隐藏的真相令人不安...', 'success');
+            setTimeout(() => {
+                showPaintingMessage('"我们崇拜的并非神明，而是囚禁我们的狱卒。"', 'success');
+            }, 3000);
+        }
     }
 }
         
