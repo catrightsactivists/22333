@@ -242,9 +242,9 @@
                         ])
                     },
                     {
-                        type: 'clickable',
+                        type: 'puzzle',
                         element: '<div class="interactive-element" style="width: 80px; height: 120px; top: 45%; left: 60%; background-color: rgba(106, 90, 205, 0.5); border: 2px dashed #6a5acd; border-radius: 3px;"></div>',
-                        action: () => showMessage('你找到了一本日记', '日记中记载着家族的秘密... "那泉水并非恩赐，而是诅咒的源头..."')
+                        action: () =>  showDeskPuzzle()
                     }
                 ]
             },
@@ -972,6 +972,119 @@ function addClue() {
                 showPaintingMessage('"我们崇拜的并非神明，而是囚禁我们的狱卒。"', 'success');
             }, 3000);
         }
+    }
+}
+        // ==================== 书桌页面 ====================
+function showDeskPuzzle() {
+    const deskHTML = `
+        <div class="door-interface">
+            <div class="door-title">家主的书桌</div>
+            <div class="door-subtitle">精致的桃花心木书桌，上面散落着文件和档案</div>
+            
+            <div class="locks-container">
+                <div class="lock-slot" onclick="examineDrawer()" style="cursor:pointer;">
+                    📁<br>抽屉
+                </div>
+                <div class="lock-slot" onclick="readDiary()" style="cursor:pointer;">
+                    📖<br>日记
+                </div>
+                <div class="lock-slot" onclick="checkAccounts()" style="cursor:pointer;">
+                    💰<br>账本
+                </div>
+                <div class="lock-slot" onclick="examineLetters()" style="cursor:pointer;">
+                    ✉️<br>信件
+                </div>
+            </div>
+
+            <div class="symbols-container">
+                <div class="sin-symbol" onclick="examineInkwell()" style="cursor:pointer;" title="墨水瓶">
+                    🖋️
+                </div>
+                <div class="sin-symbol" onclick="checkPhoto()" style="cursor:pointer;" title="照片">
+                    🖼️
+                </div>
+                <div class="sin-symbol" onclick="searchHidden()" style="cursor:pointer;" title="隐藏隔层">
+                    🔍
+                </div>
+            </div>
+
+            <div class="controls-container">
+                <button class="door-button" onclick="tryOpenSecret()">尝试打开秘密隔层</button>
+                <button class="door-button" onclick="decipherCode()">破译密码</button>
+            </div>
+
+            <div id="desk-message-area"></div>
+            <div class="hint-text">提示：仔细检查所有物品，寻找线索</div>
+        </div>
+    `;
+    
+    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', deskHTML);
+}
+
+// 抽屉功能
+function examineDrawer() {
+    const messages = [
+        "抽屉里有一些旧钥匙和印章",
+        "你发现了一把特殊的黄铜钥匙，上面刻着'VII'",
+        "抽屉底部有一些泛黄的地图草图",
+        "这里有一封被撕碎后又粘合的信件"
+    ];
+    showDeskMessage(messages[Math.floor(Math.random() * messages.length)], "success");
+}
+
+// 日记功能
+function readDiary() {
+    const entries = [
+        "'3月15日：泉水带来的财富超乎想象，但代价是什么？'",
+        "'4月2日：伊桑那孩子又说些疯话，必须把他送走'", 
+        "'5月18日：晚上的低语声越来越清晰了...'",
+        "'6月30日：我们都被困在这里了，就像祭坛上的贡品'"
+    ];
+    showDeskMessage(`日记摘录：${entries[Math.floor(Math.random() * entries.length)]}`, "success");
+}
+
+// 账本功能  
+function checkAccounts() {
+    showDeskMessage("账本显示大量资金流向一个名为'永恒之眼'的账户，用途不明", "error");
+}
+
+// 信件功能
+function examineLetters() {
+    showDeskMessage("信件中提到'逆卡巴拉的秘密'和'七重试炼'，似乎与大门有关", "success");
+}
+
+// 墨水瓶
+function examineInkwell() {
+    showDeskMessage("墨水瓶底部刻着微小的文字：'真理藏于阴影之中'", "success");
+}
+
+// 照片
+function checkPhoto() {
+    showDeskMessage("全家福照片中，某些家庭成员的眼睛被刻意涂黑", "error");
+}
+
+// 隐藏隔层
+function searchHidden() {
+    showDeskMessage("你发现了一个隐藏隔层！但需要密码才能打开", "success");
+}
+
+// 尝试打开秘密隔层
+function tryOpenSecret() {
+    showDeskMessage("隔层纹丝不动。你需要找到正确的开启方法", "error");
+}
+
+// 破译密码
+function decipherCode() {
+    showDeskMessage("这些符号似乎与七宗罪的顺序有关...", "success");
+}
+
+// 显示消息的辅助函数
+function showDeskMessage(message, type) {
+    const messageArea = document.getElementById('desk-message-area');
+    if (type === 'success') {
+        messageArea.innerHTML = `<div class="success-message">${message}</div>`;
+    } else {
+        messageArea.innerHTML = `<div class="error-message">${message}</div>`;
     }
 }
         
