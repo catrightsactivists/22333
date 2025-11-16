@@ -174,6 +174,7 @@
             border: 2px solid #e0d3b8;
             border-radius: 10px;
             min-width: 300px;
+            z-index: 40;
         }
 
         .puzzle-title {
@@ -260,6 +261,42 @@
                 ]
             },
 
+            // 油画页面交互
+            painting: {
+                background: IMAGES.PAINTING,
+                interactions: [
+                    {
+                        type: 'clickable',
+                        element: '<div class="interactive-element" style="width: 120px; height: 80px; top: 40%; left: 50%; background-color: rgba(255, 215, 0, 0.3); border: 2px dashed #ffd700; border-radius: 5px;"></div>',
+                        action: () => showMessage('古典油画', '这幅油画描绘了家族发现圣水的场景。画中的人物眼神似乎有些诡异...')
+                    }
+                ]
+            },
+
+            // 地图页面交互
+            map: {
+                background: IMAGES.MAP,
+                interactions: [
+                    {
+                        type: 'clickable',
+                        element: '<div class="interactive-element" style="width: 60px; height: 60px; top: 35%; left: 50%; background-color: rgba(220, 20, 60, 0.4); border-radius: 50%;"></div>',
+                        action: () => showMessage('庄园位置', '地图显示庄园位于世界的正中心，这显然不符合地理常识...')
+                    }
+                ]
+            },
+
+            // 家族树页面交互
+            'family-tree': {
+                background: IMAGES.FAMILY_TREE,
+                interactions: [
+                    {
+                        type: 'clickable',
+                        element: '<div class="interactive-element" style="width: 40px; height: 40px; top: 45%; left: 40%; background-color: rgba(178, 34, 34, 0.5); border-radius: 50%;"></div>',
+                        action: () => showMessage('被划掉的名字', '这个家族成员在25岁时突然死亡，死因不明...')
+                    }
+                ]
+            },
+
             // 魔药桌子页面交互
             'potion-table': {
                 background: IMAGES.POTION_TABLE,
@@ -276,8 +313,6 @@
                     }
                 ]
             }
-
-            // 可以为其他页面继续添加交互配置...
         };
 
         // ==================== 墙面配置 ====================
@@ -366,13 +401,14 @@
 
         // ==================== 交互功能函数 ====================
         function showPuzzle(title, description, buttons) {
+            closePuzzle(); // 先关闭可能存在的其他谜题
             const puzzleHTML = `
                 <div class="puzzle-interface">
                     <div class="puzzle-title">${title}</div>
                     <div>${description}</div>
                     <div class="puzzle-controls">
                         ${buttons.map(btn => 
-                            `<button class="puzzle-button" onclick="${btn.action}">${btn.text}</button>`
+                            `<button class="puzzle-button" onclick="(${btn.action.toString()})()">${btn.text}</button>`
                         ).join('')}
                     </div>
                 </div>
@@ -446,6 +482,7 @@
 
             returnButton.addEventListener('click', () => {
                 closeupView.classList.remove('active');
+                closeupView.style.backgroundImage = ''; // 清除背景图
                 setTimeout(() => {
                     hallView.style.opacity = 1;
                 }, 500);
@@ -462,52 +499,55 @@
             
             hallView.style.opacity = 0;
             
-            // 清空之前的交互元素
+            // 清空之前的交互元素和背景
             closeupView.innerHTML = '<button id="return-button">← 返回大厅</button>';
+            closeupView.style.backgroundImage = '';
             
             // 获取该页面的交互配置
             const pageConfig = PAGE_INTERACTIONS[wall.id];
             
-            if (pageConfig) {
+            if (pageConfig && pageConfig.background) {
                 // 设置背景图片
-                if (pageConfig.background) {
-                    closeupView.style.backgroundImage = `url('${pageConfig.background}')`;
-                }
+                closeupView.style.backgroundImage = `url('${pageConfig.background}')`;
                 
                 // 添加交互元素
-                pageConfig.interactions.forEach(interaction => {
-                    if (interaction.element) {
-                        closeupView.insertAdjacentHTML('beforeend', interaction.element);
-                    }
-                    
-                    // 为交互元素绑定事件
-                    if (interaction.type === 'clickable') {
-                        const elements = closeupView.querySelectorAll('.interactive-element');
-                        const lastElement = elements[elements.length - 1];
-                        if (lastElement) {
-                            lastElement.addEventListener('click', interaction.action);
+                if (pageConfig.interactions) {
+                    pageConfig.interactions.forEach(interaction => {
+                        if (interaction.element) {
+                            closeupView.insertAdjacentHTML('beforeend', interaction.element);
                         }
-                    } else if (interaction.type === 'puzzle') {
-                        // 立即执行谜题功能
-                        interaction.action();
-                    }
-                });
+                        
+                        // 为交互元素绑定事件
+                        if (interaction.type === 'clickable') {
+                            const elements = closeupView.querySelectorAll('.interactive-element');
+                            const lastElement = elements[elements.length - 1];
+                            if (lastElement) {
+                                lastElement.addEventListener('click', interaction.action);
+                            }
+                        } else if (interaction.type === 'puzzle') {
+                            // 立即执行谜题功能
+                            setTimeout(() => interaction.action(), 100);
+                        }
+                    });
+                }
             } else {
-                // 默认显示
+                // 默认显示 - 现在每个页面都会显示自己的名字
                 closeupView.innerHTML += `
                     <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
                         <h2>${wall.name}</h2>
                         <p>${wall.hint}</p>
                         <p style="margin-top: 20px; font-style: italic; color: #a08c6c;">
-                            【这是 ${wall.name} 的特写视图】<br>
-                            ${wall.image ? '' : '（等待添加特写图片和互动内容）'}
+                            【${wall.name} 页面】<br>
+                            （等待添加特写图片和互动内容）
                         </p>
                     </div>
                 `;
             }
 
+            // 重新绑定返回按钮事件
             document.getElementById('return-button').addEventListener('click', () => {
                 closeupView.classList.remove('active');
+                closeupView.style.backgroundImage = '';
                 setTimeout(() => {
                     hallView.style.opacity = 1;
                 }, 500);
