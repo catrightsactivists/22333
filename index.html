@@ -1473,6 +1473,11 @@ function findSecrets() {
 }
         // ==================== 魔药桌子页面 ====================
 function showPotionPuzzle() {
+     potionState = {
+        ingredients: [],
+        step: 0,
+        isBrewing: false
+    };
     const potionHTML = `
         <div class="door-interface">
             <div class="door-title">炼金术工作台</div>
