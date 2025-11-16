@@ -278,9 +278,9 @@
                 background: IMAGES.MAP,
                 interactions: [
                     {
-                        type: 'clickable',
+                        type: 'puzzle',
                         element: '<div class="interactive-element" style="width: 60px; height: 60px; top: 35%; left: 50%; background-color: rgba(220, 20, 60, 0.4); border-radius: 50%;"></div>',
-                        action: () => showMessage('庄园位置', '地图显示庄园位于世界的正中心，这显然不符合地理常识...')
+                        action: () => showMapPuzzle()
                     }
                 ]
             },
@@ -1086,6 +1086,132 @@ function showDeskMessage(message, type) {
     } else {
         messageArea.innerHTML = `<div class="error-message">${message}</div>`;
     }
+}
+        // ==================== 地图页面 ====================
+function showMapPuzzle() {
+    const mapHTML = `
+        <div class="door-interface" style="max-width: 800px;">
+            <div class="door-title">世界地图</div>
+            <div class="door-subtitle">"我们即是世界的中心" - 黑水家族格言</div>
+            
+            <!-- 地图可视化 -->
+            <div style="position: relative; margin: 20px auto; width: 300px; height: 200px; background: linear-gradient(135deg, #1e3c72, #2a5298); border: 3px solid #8b4513; border-radius: 10px;">
+                <!-- 庄园位置 -->
+                <div class="map-point" style="top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #d4af37;" 
+                     onclick="inspectManor()" title="黑水庄园">
+                    ★
+                </div>
+                
+                <!-- 六个标记点 -->
+                <div class="map-point" style="top: 20%; left: 70%;" onclick="inspectPoint('欧洲')" title="欧洲">Ⅰ</div>
+                <div class="map-point" style="top: 40%; left: 85%;" onclick="inspectPoint('亚洲')" title="亚洲">Ⅱ</div>
+                <div class="map-point" style="top: 70%; left: 80%;" onclick="inspectPoint('大洋洲')" title="大洋洲">Ⅲ</div>
+                <div class="map-point" style="top: 80%; left: 40%;" onclick="inspectPoint('南美洲')" title="南美洲">Ⅳ</div>
+                <div class="map-point" style="top: 40%; left: 15%;" onclick="inspectPoint('北美洲')" title="北美洲">Ⅴ</div>
+                <div class="map-point" style="top: 20%; left: 30%;" onclick="inspectPoint('非洲')" title="非洲">Ⅵ</div>
+            </div>
+
+            <div class="controls-container">
+                <button class="door-button" onclick="measureDistances()">测量距离</button>
+                <button class="door-button" onclick="checkProjection()">检查投影</button>
+                <button class="door-button" onclick="findAnomalies()">寻找异常</button>
+            </div>
+
+            <div id="map-message" style="min-height: 60px; margin-top: 20px;"></div>
+            
+            <div class="hint-text">点击地图上的标记点进行探索</div>
+        </div>
+    `;
+    
+    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', mapHTML);
+}
+
+// 地图点样式（添加到CSS中）
+const mapStyle = `
+    .map-point {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background-color: rgba(139, 69, 19, 0.8);
+        border: 2px solid #e0d3b8;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        color: #e0d3b8;
+    }
+    .map-point:hover {
+        transform: scale(1.2);
+        background-color: rgba(160, 82, 45, 0.9);
+    }
+`;
+
+// 注入CSS样式
+if (!document.querySelector('#map-styles')) {
+    const styleElement = document.createElement('style');
+    styleElement.id = 'map-styles';
+    styleElement.textContent = mapStyle;
+    document.head.appendChild(styleElement);
+}
+
+// 地图交互函数
+function inspectManor() {
+    const messages = [
+        "黑水庄园被精确标记在地图的正中心",
+        "经纬度坐标显示：0°N, 0°E - 这在地理上是不可能的",
+        "庄园周围有六个等距的标记点，形成完美的六边形",
+        "地图比例严重失真，庄园的大小相当于一个大陆"
+    ];
+    
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    showMapMessage(randomMessage, 'success');
+}
+
+function inspectPoint(region) {
+    const regionInfo = {
+        '欧洲': "边界扭曲，英伦三岛的位置完全错误",
+        '亚洲': "喜马拉雅山脉的高度被夸张了十倍",
+        '大洋洲': "澳大利亚的形状像被某种力量拉扯",
+        '南美洲': "亚马逊河流域的走向不符合任何已知地图",
+        '北美洲': "五大湖的位置出现了神秘的偏移", 
+        '非洲': "撒哈拉沙漠的面积被严重缩小"
+    };
+    
+    showMapMessage(`${region}: ${regionInfo[region]}`, 'error');
+}
+
+function measureDistances() {
+    showMapMessage("测量结果：从庄园到所有六个标记点的距离完全相等 - 这在球面几何上不可能", 'error');
+}
+
+function checkProjection() {
+    showMapMessage("地图投影分析：这不是墨卡托投影，也不是任何已知的投影方式。空间似乎在庄园周围发生了扭曲。", 'error');
+}
+
+function findAnomalies() {
+    const anomalies = [
+        "发现重力异常：庄园区域的等高线显示反重力现象",
+        "时间异常：根据星图标记，这张地图的时间坐标是混乱的", 
+        "空间异常：庄园周围的区域显示出非欧几里得几何特征",
+        "发现隐藏标记：六个点连接后形成逆卡巴拉符号"
+    ];
+    
+    const randomAnomaly = anomalies[Math.floor(Math.random() * anomalies.length)];
+    showMapMessage(`异常发现：${randomAnomaly}`, 'success');
+}
+
+function showMapMessage(message, type) {
+    const messageArea = document.getElementById('map-message');
+    const color = type === 'success' ? '#6b8e23' : '#8b4513';
+    messageArea.innerHTML = `
+        <div style="color: ${color}; font-size: 1.1em; text-align: center; padding: 10px; 
+                    background-color: rgba(42, 31, 26, 0.8); border-radius: 5px; border-left: 4px solid ${color};">
+            ${message}
+        </div>
+    `;
 }
         
     </script>
