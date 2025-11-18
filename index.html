@@ -353,6 +353,23 @@
             FAMILY_TREE: 'familytree.jpg',
             POTION_TABLE: 'desk.jpg'
         };
+            // ==================== 游戏进度追踪 ====================
+let gameProgress = {
+    desk: { diaryRead: false, cluesFound: 0 },
+    map: { markersChecked: 0, totalMarkers: 6 },
+    familyTree: { secretFound: false },
+    potionTable: { recipeCompleted: false },
+    painting: { cluesFound: 0 },
+    door: { unlocked: false }
+};
+
+let connectionsUnlocked = {
+    deskToMap: false,
+    mapToFamily: false, 
+    familyToPotion: false,
+    potionToPainting: false,
+    toSecondFloor: false
+};
 
         // ==================== 子页面交互配置 ====================
         const PAGE_INTERACTIONS = {
@@ -1164,6 +1181,7 @@ function readDiary() {
         "'6月30日：我们都被困在这里了，就像祭坛上的贡品'"
     ];
     showDeskMessage(`日记摘录：${entries[Math.floor(Math.random() * entries.length)]}`, "success");
+    unlockConnection('desk', 'readDiary');
 }
 
 // 账本功能  
@@ -1291,6 +1309,7 @@ function inspectManor() {
     
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
     showMapMessage(randomMessage, 'success');
+    checkMapMarker();
 }
 
 function inspectPoint(region) {
@@ -1304,6 +1323,7 @@ function inspectPoint(region) {
     };
     
     showMapMessage(`${region}: ${regionInfo[region]}`, 'error');
+    checkMapMarker();
 }
 
 function measureDistances() {
@@ -1335,7 +1355,16 @@ function showMapMessage(message, type) {
             ${message}
         </div>
     `;
-}// ==================== 家族树页面 ====================
+}
+        function checkMapMarker() {
+    gameProgress.map.markersChecked++;
+    if (gameProgress.map.markersChecked >= gameProgress.map.totalMarkers) {
+        showClueMessage('所有标记点检查完毕！发现地图上的异常模式指向家族树...');
+        connectionsUnlocked.mapToFamily = true;
+        updateFamilyTreeButton();
+    }
+}
+        // ==================== 家族树页面 ====================
 function showFamilyTreePuzzle() {
     const familyTreeHTML = `
         <div class="door-interface" style="max-width: 800px;">
@@ -1687,6 +1716,177 @@ function readFormula() {
 function showPotionMessage(message, type) {
     const messageDiv = document.getElementById('potion-message');
     messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+}
+        // ==================== 连接系统 ====================
+function unlockConnection(fromPage, trigger) {
+    // 更新进度
+    if (fromPage === 'desk' && trigger === 'readDiary') {
+        gameProgress.desk.diaryRead = true;
+        showClueMessage('新的线索：地图上的标记点似乎很重要！现在可以去检查地图了。');
+        connectionsUnlocked.deskToMap = true;
+        updateMapButton();
+    }
+    
+    // 检查是否可以前往二楼
+    checkSecondFloorAccess();
+}
+
+function showClueMessage(message) {
+    // 创建线索提示
+    const clueHTML = `
+        <div class="puzzle-interface" style="background: rgba(75, 0, 130, 0.95); border: 2px solid #9370db; z-index: 1000;">
+            <div class="puzzle-title">🔍 发现线索</div>
+            <div style="padding: 20px; font-size: 1.1em;">${message}</div>
+            <div class="puzzle-controls">
+                <button class="puzzle-button" onclick="this.parentElement.parentElement.remove()">继续探索</button>
+            </div>
+        </div>
+    `;
+    
+    // 添加到页面
+    document.body.insertAdjacentHTML('beforeend', clueHTML);
+}
+
+function updateMapButton() {
+    // 更新大厅中的地图按钮提示
+    const mapDot = document.querySelector('[data-wall-id="map"]');
+    if (mapDot && connectionsUnlocked.deskToMap) {
+        const tooltip = mapDot.querySelector('.dot-tooltip');
+        if (tooltip) {
+            tooltip.innerHTML = '地图 <span style="color: #ffd700;">(新线索!)</span>';
+        }
+        mapDot.style.border = '2px solid #ffd700';
+        mapDot.style.background = 'rgba(255, 215, 0, 0.3)';
+    }
+}
+
+function updateFamilyTreeButton() {
+    // 更新大厅中的家族树按钮提示
+    const familyDot = document.querySelector('[data-wall-id="family-tree"]');
+    if (familyDot && connectionsUnlocked.mapToFamily) {
+        const tooltip = familyDot.querySelector('.dot-tooltip');
+        if (tooltip) {
+            tooltip.innerHTML = '家族树 <span style="color: #ffd700;">(新线索!)</span>';
+        }
+        familyDot.style.border = '2px solid #ffd700';
+        familyDot.style.background = 'rgba(255, 215, 0, 0.3)';
+    }
+}
+
+function checkSecondFloorAccess() {
+    const allSolved = 
+        gameProgress.desk.diaryRead &&
+        gameProgress.map.markersChecked >= 6 &&
+        gameProgress.familyTree.secretFound &&
+        gameProgress.potionTable.recipeCompleted &&
+        gameProgress.painting.cluesFound >= 4 &&
+        gameProgress.door.unlocked;
+    
+    if (allSolved && !connectionsUnlocked.toSecondFloor) {
+        connectionsUnlocked.toSecondFloor = true;
+        showSecondFloorEntrance();
+    }
+}
+
+// 🆕 二楼入口函数
+function showSecondFloorEntrance() {
+    // 在大厅添加通往二楼的入口
+    const hallView = document.getElementById('hall-view');
+    
+    // 检查是否已经存在二楼入口
+    if (document.querySelector('[data-wall-id="second-floor"]')) {
+        return;
+    }
+    
+    const secondFloorDot = document.createElement('div');
+    secondFloorDot.className = 'interaction-dot';
+    secondFloorDot.dataset.wallId = 'second-floor';
+    secondFloorDot.style.left = '50%';
+    secondFloorDot.style.top = '50%';
+    secondFloorDot.style.background = 'rgba(255, 215, 0, 0.5)';
+    secondFloorDot.style.border = '3px solid #ffd700';
+    secondFloorDot.style.width = '20px';
+    secondFloorDot.style.height = '20px';
+    
+    secondFloorDot.innerHTML = `
+        <div class="dot-tooltip" style="top: -50px; left: 50%; transform: translateX(-50%); background: rgba(255, 215, 0, 0.9); color: #000; font-weight: bold;">
+            🏰 通往二楼
+        </div>
+    `;
+    
+    secondFloorDot.onclick = () => showSecondFloorScene();
+    hallView.appendChild(secondFloorDot);
+    
+    showClueMessage('🎉 通往二楼的通道已经打开！点击大厅中央前往二楼。');
+}
+
+// 🆕 二楼场景
+function showSecondFloorScene() {
+    const secondFloorHTML = `
+        <div class="door-interface" style="background: rgba(0,0,0,0.9); max-width: 600px;">
+            <div class="door-title">🏰 二楼 · 真相之间</div>
+            <div class="door-subtitle">时间的尽头，命运的彼岸</div>
+            
+            <div style="margin: 30px 0; text-align: left; line-height: 1.6; font-size: 1.1em;">
+                <p>你登上了庄园的二楼，这里与楼下的奢华截然不同...</p>
+                <p>房间中央悬浮着一个漆黑的球体，它吞噬着周围的光线。</p>
+                <p>小女儿伊莎贝拉站在黑洞边缘，喃喃自语："我必须回去...改变这一切..."</p>
+            </div>
+            
+            <div class="controls-container">
+                <button class="door-button" onclick="talkToDaughter()">与伊莎贝拉对话</button>
+                <button class="door-button" onclick="approachBlackHole()">接近黑洞</button>
+                <button class="door-button" onclick="observeRoom()">观察房间</button>
+            </div>
+            
+            <div id="second-floor-message" style="min-height: 80px; margin-top: 20px;"></div>
+        </div>
+    `;
+    
+    // 清空当前视图并添加二楼场景
+    const closeupView = document.getElementById('closeup-view');
+    closeupView.innerHTML = '<button id="return-button">← 返回大厅</button>';
+    closeupView.insertAdjacentHTML('beforeend', secondFloorHTML);
+    closeupView.classList.add('active');
+    
+    // 重新绑定返回按钮
+    document.getElementById('return-button').addEventListener('click', () => {
+        closeupView.classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('hall-view').style.opacity = 1;
+        }, 500);
+    });
+}
+
+// 二楼交互函数
+function talkToDaughter() {
+    document.getElementById('second-floor-message').innerHTML = `
+        <div class="success-message">
+            "你终于来了...时间不多了。"<br>
+            "圣水不是恩赐，是诅咒。我们都被困在了时间的循环里。"<br>
+            "只有打破七重封印，才能结束这一切..."
+        </div>
+    `;
+}
+
+function approachBlackHole() {
+    document.getElementById('second-floor-message').innerHTML = `
+        <div class="error-message">
+            黑洞产生强大的引力，你无法再前进一步。<br>
+            时间在这里变得扭曲而混乱，你能看到过去和未来的片段...
+        </div>
+    `;
+}
+
+function observeRoom() {
+    document.getElementById('second-floor-message').innerHTML = `
+        <div class="success-message">
+            墙壁上刻满了奇怪的符号和方程式：<br>
+            "E = mc² → E = mc³"<br>
+            "时间流速：1:1000"<br>
+            "第七代：终结或新生"
+        </div>
+    `;
 }
      
         
