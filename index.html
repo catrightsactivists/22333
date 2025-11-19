@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>黑水庄园的秘密</title>
     <style>
-        /* [之前的所有CSS样式保持不变] */
         /* 基础样式 */
         body, html {
             margin: 0;
@@ -48,6 +47,12 @@
             30% { opacity: 1; }
             70% { opacity: 1; }
             100% { opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
         }
 
         /* 大厅视图 */
@@ -203,134 +208,185 @@
         .puzzle-button:hover {
             background-color: rgba(120, 90, 60, 0.9);
         }
-           /* 魔药页面样式 - 直接复制就行 */
-.door-interface {
-    background: rgba(42,31,26,0.95);
-    padding: 20px;
-    border: 2px solid #e0d3b8;
-    border-radius: 10px;
-    max-width: 500px;
-    margin: 20px auto;
-}
-.door-title {
-    text-align: center;
-    font-size: 1.5em;
-    color: #d4af37;
-    margin-bottom: 10px;
-}
-.door-subtitle {
-    text-align: center;
-    color: #a08c6c;
-    margin-bottom: 20px;
-}
-.ingredient {
-    padding: 8px;
-    margin: 5px 0;
-    background: rgba(139,69,19,0.3);
-    border: 1px solid #8b4513;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.ingredient:hover {
-    background: rgba(139,69,19,0.5);
-}
-.step {
-    padding: 5px 0;
-}
-.success-message {
-    color: #6b8e23;
-    padding: 10px;
-    background: rgba(107,142,35,0.1);
-    border-radius: 5px;
-}
-.error-message {
-    color: #8b4513;
-    padding: 10px;
-    background: rgba(139,69,19,0.1);
-    border-radius: 5px;
-}
-.controls-container {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 20px;
-}
-.door-button {
-    padding: 8px 16px;
-    background: rgba(90,70,50,0.7);
-    color: #e0d3b8;
-    border: 1px solid #e0d3b8;
-    cursor: pointer;
-}
-.door-button:hover {
-    background: rgba(120,90,60,0.9);
-}
-.hint-text {
-    text-align: center;
-    margin-top: 15px;
-    color: #a08c6c;
-}
-        /* 添加这些缺失的大门页面样式 */
-.locks-container {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin: 20px 0;
-    flex-wrap: wrap;
-}
 
-.lock-slot {
-    width: 50px;
-    height: 50px;
-    border: 2px solid #8b4513;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    background: rgba(139, 69, 19, 0.3);
-}
+        /* 魔药页面样式 */
+        .door-interface {
+            background: rgba(42,31,26,0.95);
+            padding: 20px;
+            border: 2px solid #e0d3b8;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .door-title {
+            text-align: center;
+            font-size: 1.5em;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+        .door-subtitle {
+            text-align: center;
+            color: #a08c6c;
+            margin-bottom: 20px;
+        }
+        .ingredient {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(139,69,19,0.3);
+            border: 1px solid #8b4513;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .ingredient:hover {
+            background: rgba(139,69,19,0.5);
+        }
+        .step {
+            padding: 5px 0;
+        }
+        .success-message {
+            color: #6b8e23;
+            padding: 10px;
+            background: rgba(107,142,35,0.1);
+            border-radius: 5px;
+        }
+        .error-message {
+            color: #8b4513;
+            padding: 10px;
+            background: rgba(139,69,19,0.1);
+            border-radius: 5px;
+        }
+        .controls-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .door-button {
+            padding: 8px 16px;
+            background: rgba(90,70,50,0.7);
+            color: #e0d3b8;
+            border: 1px solid #e0d3b8;
+            cursor: pointer;
+        }
+        .door-button:hover {
+            background: rgba(120,90,60,0.9);
+        }
+        .hint-text {
+            text-align: center;
+            margin-top: 15px;
+            color: #a08c6c;
+        }
 
-.symbols-container {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin: 20px 0;
-    flex-wrap: wrap;
-}
+        /* 大门页面样式 */
+        .locks-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
 
-.sin-symbol {
-    width: 50px;
-    height: 50px;
-    border: 2px solid #e0d3b8;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    cursor: grab;
-    background: rgba(90, 70, 50, 0.5);
-    transition: all 0.3s ease;
-}
+        .lock-slot {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            background: rgba(139, 69, 19, 0.3);
+        }
 
-.sin-symbol:hover {
-    transform: scale(1.1);
-    background: rgba(120, 90, 60, 0.7);
-}
+        .symbols-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
 
-.sin-symbol.used {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
+        .sin-symbol {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e0d3b8;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: grab;
+            background: rgba(90, 70, 50, 0.5);
+            transition: all 0.3s ease;
+        }
 
-.lock-slot.filled {
-    background: rgba(107, 142, 35, 0.3);
-}
+        .sin-symbol:hover {
+            transform: scale(1.1);
+            background: rgba(120, 90, 60, 0.7);
+        }
 
-.dragging {
-    opacity: 0.5;
-}
+        .sin-symbol.used {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
+        .lock-slot.filled {
+            background: rgba(107, 142, 35, 0.3);
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+
+        /* 油画热点样式 */
+        .painting-hotspot {
+            position: absolute;
+            padding: 8px 12px;
+            background: rgba(139, 69, 19, 0.7);
+            border: 2px solid #e0d3b8;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #e0d3b8;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .painting-hotspot:hover {
+            background: rgba(160, 82, 45, 0.9);
+            transform: scale(1.1);
+        }
+
+        .painting-area {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            margin: 0 auto;
+            background: rgba(139, 69, 19, 0.2);
+            border: 3px solid #8b4513;
+            border-radius: 10px;
+        }
+
+        /* 地图点样式 */
+        .map-point {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(139, 69, 19, 0.8);
+            border: 2px solid #e0d3b8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            color: #e0d3b8;
+        }
+        .map-point:hover {
+            transform: scale(1.2);
+            background-color: rgba(160, 82, 45, 0.9);
+        }
     </style>
 </head>
 <body>
@@ -351,25 +407,27 @@
             PAINTING: 'paint.jpg',
             MAP: 'map.jpg',
             FAMILY_TREE: 'familytree.jpg',
-            POTION_TABLE: 'desk.jpg'
+            POTION_TABLE: 'desk.jpg',
+            SECOND_FLOOR: 'second_floor.jpg'
         };
-            // ==================== 游戏进度追踪 ====================
-let gameProgress = {
-    desk: { diaryRead: false, cluesFound: 0 },
-    map: { markersChecked: 0, totalMarkers: 6 },
-    familyTree: { secretFound: false },
-    potionTable: { recipeCompleted: false },
-    painting: { cluesFound: 0 },
-    door: { unlocked: false }
-};
 
-let connectionsUnlocked = {
-    deskToMap: false,
-    mapToFamily: false, 
-    familyToPotion: false,
-    potionToPainting: false,
-    toSecondFloor: false
-};
+        // ==================== 游戏进度追踪 ====================
+        let gameProgress = {
+            desk: { diaryRead: false, cluesFound: 0 },
+            map: { markersChecked: 0, totalMarkers: 6 },
+            familyTree: { secretFound: false },
+            potionTable: { recipeCompleted: false },
+            painting: { cluesFound: 0 },
+            door: { unlocked: false }
+        };
+
+        let connectionsUnlocked = {
+            deskToMap: false,
+            mapToFamily: false, 
+            familyToPotion: false,
+            potionToPainting: false,
+            toSecondFloor: false
+        };
 
         // ==================== 子页面交互配置 ====================
         const PAGE_INTERACTIONS = {
@@ -590,6 +648,12 @@ let connectionsUnlocked = {
                 dot.style.left = `${pos.x}%`;
                 dot.style.top = `${pos.y}%`;
 
+                // 设置开始按钮为金色
+                if (wall.isStart) {
+                    dot.style.background = 'rgba(255, 215, 0, 0.5)';
+                    dot.style.border = '2px solid #ffd700';
+                }
+
                 const tooltip = document.createElement('div');
                 tooltip.className = 'dot-tooltip';
                 tooltip.textContent = wall.name;
@@ -608,6 +672,8 @@ let connectionsUnlocked = {
                         document.querySelectorAll('.interaction-dot:not([data-wall-id="start"])').forEach(otherDot => {
                             otherDot.style.display = 'block';
                         });
+                        // 开始游戏后点亮第一个目标（书桌）
+                        highlightNextTarget('desk');
                     } else {
                         showCloseup(wall);
                     }
@@ -699,1197 +765,1205 @@ let connectionsUnlocked = {
         }
 
         window.addEventListener('load', initGame);
+
         // ==================== 大门页面数据配置 ====================
-const DOOR_CONFIG = {
-    // 七宗罪符号配置
-    sins: [
-        { id: 'pride', symbol: '🦁', name: '傲慢', latin: 'Superbia' },
-        { id: 'envy', symbol: '🦋', name: '嫉妒', latin: 'Invidia' },
-        { id: 'wrath', symbol: '🐂', name: '愤怒', latin: 'Ira' },
-        { id: 'sloth', symbol: '🦥', name: '懒惰', latin: 'Acedia' },
-        { id: 'greed', symbol: '🦊', name: '贪婪', latin: 'Avaritia' },
-        { id: 'gluttony', symbol: '🐗', name: '暴食', latin: 'Gula' },
-        { id: 'lust', symbol: '🦂', name: '色欲', latin: 'Luxuria' }
-    ],
-    // 正确的开启顺序（逆卡巴拉顺序）
-    correctOrder: ['gluttony', 'lust', 'greed', 'sloth', 'wrath', 'envy', 'pride'],
-    // 提示信息
-    hints: [
-        "提示：顺序与物质的堕落有关",
-        "提示：想想什么是'逆卡巴拉'", 
-        "提示：从最基础的欲望开始",
-        "提示：暴食 → 色欲 → 贪婪 → 懒惰 → 愤怒 → 嫉妒 → 傲慢"
-    ]
-};
+        const DOOR_CONFIG = {
+            // 七宗罪符号配置
+            sins: [
+                { id: 'pride', symbol: '狮', name: '傲慢', latin: 'Superbia' },
+                { id: 'envy', symbol: '蝶', name: '嫉妒', latin: 'Invidia' },
+                { id: 'wrath', symbol: '牛', name: '愤怒', latin: 'Ira' },
+                { id: 'sloth', symbol: '树懒', name: '懒惰', latin: 'Acedia' },
+                { id: 'greed', symbol: '狐', name: '贪婪', latin: 'Avaritia' },
+                { id: 'gluttony', symbol: '野猪', name: '暴食', latin: 'Gula' },
+                { id: 'lust', symbol: '蝎', name: '色欲', latin: 'Luxuria' }
+            ],
+            // 正确的开启顺序（逆卡巴拉顺序）
+            correctOrder: ['gluttony', 'lust', 'greed', 'sloth', 'wrath', 'envy', 'pride'],
+            // 提示信息
+            hints: [
+                "提示：顺序与物质的堕落有关",
+                "提示：想想什么是'逆卡巴拉'", 
+                "提示：从最基础的欲望开始",
+                "提示：暴食 → 色欲 → 贪婪 → 懒惰 → 愤怒 → 嫉妒 → 傲慢"
+            ]
+        };
 
-// ==================== 大门页面游戏状态 ====================
-let doorGameState = {
-    currentSequence: [],
-    availableSins: [...DOOR_CONFIG.sins],
-    hintsUsed: 0,
-    attempts: 0
-};
+        // ==================== 大门页面游戏状态 ====================
+        let doorGameState = {
+            currentSequence: [],
+            availableSins: [...DOOR_CONFIG.sins],
+            hintsUsed: 0,
+            attempts: 0
+        };
 
-// ==================== 大门页面交互函数 ====================
-function showDoorPuzzle() {
-    const doorHTML = `
-        <div class="door-interface">
-            <div class="door-title">七重锁钥</div>
-            <div class="door-subtitle">"Sicut Superius, Inferius"<br>如其在上，如其在下</div>
-            
-            <div class="locks-container" id="locks-container">
-                ${Array(7).fill(0).map((_, index) => `
-                    <div class="lock-slot" data-slot-index="${index}" onclick="placeSymbol(${index})">
-                        ${doorGameState.currentSequence[index] ? 
-                            DOOR_CONFIG.sins.find(sin => sin.id === doorGameState.currentSequence[index]).symbol : 
-                            '?'
-                        }
+        // ==================== 大门页面交互函数 ====================
+        function showDoorPuzzle() {
+            const doorHTML = `
+                <div class="door-interface">
+                    <div class="door-title">七重锁钥</div>
+                    <div class="door-subtitle">"Sicut Superius, Inferius"<br>如其在上，如其在下</div>
+                    
+                    <div class="locks-container" id="locks-container">
+                        ${Array(7).fill(0).map((_, index) => `
+                            <div class="lock-slot" data-slot-index="${index}" onclick="placeSymbol(${index})">
+                                ${doorGameState.currentSequence[index] ? 
+                                    DOOR_CONFIG.sins.find(sin => sin.id === doorGameState.currentSequence[index]).symbol : 
+                                    '?'
+                                }
+                            </div>
+                        `).join('')}
                     </div>
-                `).join('')}
-            </div>
 
-            <div class="symbols-container" id="symbols-container">
-                ${doorGameState.availableSins.map(sin => `
-                    <div class="sin-symbol" draggable="true" data-sin-id="${sin.id}"
-                         onclick="selectSymbol('${sin.id}')"
-                         title="${sin.name} - ${sin.latin}">
-                        ${sin.symbol}
+                    <div class="symbols-container" id="symbols-container">
+                        ${doorGameState.availableSins.map(sin => `
+                            <div class="sin-symbol" draggable="true" data-sin-id="${sin.id}"
+                                 onclick="selectSymbol('${sin.id}')"
+                                 title="${sin.name} - ${sin.latin}">
+                                ${sin.symbol}
+                            </div>
+                        `).join('')}
                     </div>
-                `).join('')}
-            </div>
 
-            <div class="controls-container">
-                <button class="door-button" onclick="checkSequence()" 
-                        ${doorGameState.currentSequence.length !== 7 ? 'disabled' : ''}>
-                    尝试开锁
-                </button>
-                <button class="door-button" onclick="resetSequence()">重置顺序</button>
-                <button class="door-button" onclick="showHint()">
-                    提示 (${3 - doorGameState.hintsUsed}次剩余)
-                </button>
-            </div>
+                    <div class="controls-container">
+                        <button class="door-button" onclick="checkSequence()" 
+                                ${doorGameState.currentSequence.length !== 7 ? 'disabled' : ''}>
+                            尝试开锁
+                        </button>
+                        <button class="door-button" onclick="resetSequence()">重置顺序</button>
+                        <button class="door-button" onclick="showHint()">
+                            提示 (${3 - doorGameState.hintsUsed}次剩余)
+                        </button>
+                    </div>
 
-            <div id="message-area"></div>
-            <div class="hint-text">尝试次数: ${doorGameState.attempts}</div>
-        </div>
-    `;
+                    <div id="message-area"></div>
+                    <div class="hint-text">尝试次数: ${doorGameState.attempts}</div>
+                </div>
+            `;
 
-    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', doorHTML);
-    setupDragAndDrop();
-}
-
-function setupDragAndDrop() {
-    const symbols = document.querySelectorAll('.sin-symbol');
-    const slots = document.querySelectorAll('.lock-slot');
-
-    symbols.forEach(symbol => {
-        symbol.addEventListener('dragstart', handleDragStart);
-        symbol.addEventListener('dragend', handleDragEnd);
-    });
-
-    slots.forEach(slot => {
-        slot.addEventListener('dragover', handleDragOver);
-        slot.addEventListener('drop', handleDrop);
-    });
-}
-
-function handleDragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.dataset.sinId);
-    e.target.classList.add('dragging');
-}
-
-function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    const sinId = e.dataTransfer.getData('text/plain');
-    const slotIndex = parseInt(e.target.dataset.slotIndex);
-    placeSymbolInSlot(sinId, slotIndex);
-}
-
-function selectSymbol(sinId) {
-    const firstEmptySlot = document.querySelector('.lock-slot:not(.filled)');
-    if (firstEmptySlot) {
-        const slotIndex = parseInt(firstEmptySlot.dataset.slotIndex);
-        placeSymbolInSlot(sinId, slotIndex);
-    }
-}
-
-function placeSymbol(slotIndex) {
-    if (doorGameState.currentSequence[slotIndex]) {
-        removeSymbolFromSlot(slotIndex);
-    }
-}
-
-function placeSymbolInSlot(sinId, slotIndex) {
-    if (doorGameState.currentSequence[slotIndex]) {
-        removeSymbolFromSlot(slotIndex);
-    }
-
-    doorGameState.currentSequence[slotIndex] = sinId;
-    const sin = DOOR_CONFIG.sins.find(s => s.id === sinId);
-    
-    const slot = document.querySelector(`[data-slot-index="${slotIndex}"]`);
-    slot.innerHTML = sin.symbol;
-    slot.classList.add('filled');
-    slot.title = `${sin.name} - ${sin.latin}`;
-
-    const symbolElement = document.querySelector(`[data-sin-id="${sinId}"]`);
-    if (symbolElement) {
-        symbolElement.classList.add('used');
-        symbolElement.style.cursor = 'not-allowed';
-        symbolElement.draggable = false;
-    }
-
-    const checkButton = document.querySelector('.door-button');
-    if (doorGameState.currentSequence.filter(Boolean).length === 7) {
-        checkButton.disabled = false;
-    }
-}
-
-function removeSymbolFromSlot(slotIndex) {
-    const sinId = doorGameState.currentSequence[slotIndex];
-    if (sinId) {
-        const symbolElement = document.querySelector(`[data-sin-id="${sinId}"]`);
-        if (symbolElement) {
-            symbolElement.classList.remove('used');
-            symbolElement.style.cursor = 'grab';
-            symbolElement.draggable = true;
+            document.getElementById('closeup-view').insertAdjacentHTML('beforeend', doorHTML);
+            setupDragAndDrop();
         }
 
-        doorGameState.currentSequence[slotIndex] = null;
-        const slot = document.querySelector(`[data-slot-index="${slotIndex}"]`);
-        slot.innerHTML = '?';
-        slot.classList.remove('filled');
-        slot.title = '';
+        function setupDragAndDrop() {
+            const symbols = document.querySelectorAll('.sin-symbol');
+            const slots = document.querySelectorAll('.lock-slot');
 
-        const checkButton = document.querySelector('.door-button');
-        checkButton.disabled = true;
-    }
-}
+            symbols.forEach(symbol => {
+                symbol.addEventListener('dragstart', handleDragStart);
+                symbol.addEventListener('dragend', handleDragEnd);
+            });
 
-function checkSequence() {
-    doorGameState.attempts++;
-    const currentSequence = doorGameState.currentSequence.filter(Boolean);
-    
-    if (currentSequence.length !== 7) {
-        showMessage('请填满所有七个锁孔', 'error');
-        return;
-    }
+            slots.forEach(slot => {
+                slot.addEventListener('dragover', handleDragOver);
+                slot.addEventListener('drop', handleDrop);
+            });
+        }
 
-    const isCorrect = currentSequence.every((sinId, index) => 
-        sinId === DOOR_CONFIG.correctOrder[index]
-    );
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.sinId);
+            e.target.classList.add('dragging');
+        }
 
-    if (isCorrect) {
-        showMessage('成功了！大门缓缓打开...', 'success');
-        setTimeout(() => {
-            showMessage('门后是一条通往未知的通道...', 'success');
-        }, 2000);
-    } else {
-        showMessage('锁孔发出沉重的响声，但门没有打开。顺序似乎不对...', 'error');
-        const correctPositions = currentSequence.filter((sinId, index) => 
-            sinId === DOOR_CONFIG.correctOrder[index]
-        ).length;
-        showMessage(`有 ${correctPositions} 个符号在正确的位置上`, 'error');
-    }
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
 
-    updateAttemptsDisplay();
-}
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
 
-function resetSequence() {
-    doorGameState.currentSequence = [];
-    doorGameState.availableSins = [...DOOR_CONFIG.sins];
-    
-    const slots = document.querySelectorAll('.lock-slot');
-    slots.forEach(slot => {
-        slot.innerHTML = '?';
-        slot.classList.remove('filled');
-        slot.title = '';
-    });
+        function handleDrop(e) {
+            e.preventDefault();
+            const sinId = e.dataTransfer.getData('text/plain');
+            const slotIndex = parseInt(e.target.dataset.slotIndex);
+            placeSymbolInSlot(sinId, slotIndex);
+        }
 
-    const symbols = document.querySelectorAll('.sin-symbol');
-    symbols.forEach(symbol => {
-        symbol.classList.remove('used');
-        symbol.style.cursor = 'grab';
-        symbol.draggable = true;
-    });
+        function selectSymbol(sinId) {
+            const firstEmptySlot = document.querySelector('.lock-slot:not(.filled)');
+            if (firstEmptySlot) {
+                const slotIndex = parseInt(firstEmptySlot.dataset.slotIndex);
+                placeSymbolInSlot(sinId, slotIndex);
+            }
+        }
 
-    const checkButton = document.querySelector('.door-button');
-    checkButton.disabled = true;
+        function placeSymbol(slotIndex) {
+            if (doorGameState.currentSequence[slotIndex]) {
+                removeSymbolFromSlot(slotIndex);
+            }
+        }
 
-    showMessage('顺序已重置', 'error');
-}
+        function placeSymbolInSlot(sinId, slotIndex) {
+            if (doorGameState.currentSequence[slotIndex]) {
+                removeSymbolFromSlot(slotIndex);
+            }
 
-function showHint() {
-    if (doorGameState.hintsUsed >= 3) {
-        showMessage('没有更多提示了', 'error');
-        return;
-    }
+            doorGameState.currentSequence[slotIndex] = sinId;
+            const sin = DOOR_CONFIG.sins.find(s => s.id === sinId);
+            
+            const slot = document.querySelector(`[data-slot-index="${slotIndex}"]`);
+            slot.innerHTML = sin.symbol;
+            slot.classList.add('filled');
+            slot.title = `${sin.name} - ${sin.latin}`;
 
-    doorGameState.hintsUsed++;
-    const hint = DOOR_CONFIG.hints[doorGameState.hintsUsed - 1];
-    showMessage(hint, 'error');
-    
-    const hintButton = document.querySelector('.door-button:last-child');
-    hintButton.textContent = `提示 (${3 - doorGameState.hintsUsed}次剩余)`;
-    
-    if (doorGameState.hintsUsed >= 3) {
-        hintButton.disabled = true;
-    }
-}
+            const symbolElement = document.querySelector(`[data-sin-id="${sinId}"]`);
+            if (symbolElement) {
+                symbolElement.classList.add('used');
+                symbolElement.style.cursor = 'not-allowed';
+                symbolElement.draggable = false;
+            }
 
-function showMessage(message, type) {
-    const messageArea = document.getElementById('message-area');
-    messageArea.innerHTML = `<div class="${type}-message">${message}</div>`;
-    
-    if (type === 'success') {
-        messageArea.classList.add('success-message');
-        messageArea.classList.remove('error-message');
-    } else {
-        messageArea.classList.add('error-message');
-        messageArea.classList.remove('success-message');
-    }
-}
+            const checkButton = document.querySelector('.door-button');
+            if (doorGameState.currentSequence.filter(Boolean).length === 7) {
+                checkButton.disabled = false;
+            }
+        }
 
-function updateAttemptsDisplay() {
-    const attemptsDisplay = document.querySelector('.hint-text');
-    if (attemptsDisplay) {
-        attemptsDisplay.textContent = `尝试次数: ${doorGameState.attempts}`;
-    }
-}
+        function removeSymbolFromSlot(slotIndex) {
+            const sinId = doorGameState.currentSequence[slotIndex];
+            if (sinId) {
+                const symbolElement = document.querySelector(`[data-sin-id="${sinId}"]`);
+                if (symbolElement) {
+                    symbolElement.classList.remove('used');
+                    symbolElement.style.cursor = 'grab';
+                    symbolElement.draggable = true;
+                }
+
+                doorGameState.currentSequence[slotIndex] = null;
+                const slot = document.querySelector(`[data-slot-index="${slotIndex}"]`);
+                slot.innerHTML = '?';
+                slot.classList.remove('filled');
+                slot.title = '';
+
+                const checkButton = document.querySelector('.door-button');
+                checkButton.disabled = true;
+            }
+        }
+
+        function checkSequence() {
+            doorGameState.attempts++;
+            const currentSequence = doorGameState.currentSequence.filter(Boolean);
+            
+            if (currentSequence.length !== 7) {
+                showMessage('请填满所有七个锁孔', 'error');
+                return;
+            }
+
+            const isCorrect = currentSequence.every((sinId, index) => 
+                sinId === DOOR_CONFIG.correctOrder[index]
+            );
+
+            if (isCorrect) {
+                showMessage('成功了！大门缓缓打开...', 'success');
+                setTimeout(() => {
+                    showMessage('门后是一条通往未知的通道...', 'success');
+                }, 2000);
+            } else {
+                showMessage('锁孔发出沉重的响声，但门没有打开。顺序似乎不对...', 'error');
+                const correctPositions = currentSequence.filter((sinId, index) => 
+                    sinId === DOOR_CONFIG.correctOrder[index]
+                ).length;
+                showMessage(`有 ${correctPositions} 个符号在正确的位置上`, 'error');
+            }
+
+            updateAttemptsDisplay();
+        }
+
+        function resetSequence() {
+            doorGameState.currentSequence = [];
+            doorGameState.availableSins = [...DOOR_CONFIG.sins];
+            
+            const slots = document.querySelectorAll('.lock-slot');
+            slots.forEach(slot => {
+                slot.innerHTML = '?';
+                slot.classList.remove('filled');
+                slot.title = '';
+            });
+
+            const symbols = document.querySelectorAll('.sin-symbol');
+            symbols.forEach(symbol => {
+                symbol.classList.remove('used');
+                symbol.style.cursor = 'grab';
+                symbol.draggable = true;
+            });
+
+            const checkButton = document.querySelector('.door-button');
+            checkButton.disabled = true;
+
+            showMessage('顺序已重置', 'error');
+        }
+
+        function showHint() {
+            if (doorGameState.hintsUsed >= 3) {
+                showMessage('没有更多提示了', 'error');
+                return;
+            }
+
+            doorGameState.hintsUsed++;
+            const hint = DOOR_CONFIG.hints[doorGameState.hintsUsed - 1];
+            showMessage(hint, 'error');
+            
+            const hintButton = document.querySelector('.door-button:last-child');
+            hintButton.textContent = `提示 (${3 - doorGameState.hintsUsed}次剩余)`;
+            
+            if (doorGameState.hintsUsed >= 3) {
+                hintButton.disabled = true;
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('message-area');
+            messageArea.innerHTML = `<div class="${type}-message">${message}</div>`;
+            
+            if (type === 'success') {
+                messageArea.classList.add('success-message');
+                messageArea.classList.remove('error-message');
+            } else {
+                messageArea.classList.add('error-message');
+                messageArea.classList.remove('success-message');
+            }
+        }
+
+        function updateAttemptsDisplay() {
+            const attemptsDisplay = document.querySelector('.hint-text');
+            if (attemptsDisplay) {
+                attemptsDisplay.textContent = `尝试次数: ${doorGameState.attempts}`;
+            }
+        }
+
         // ==================== 油画页面 ====================
-function showPaintingPuzzle() {
-    const paintingHTML = `
-        <div class="door-interface">
-            <div class="door-title">神秘的古典油画</div>
-            <div class="door-subtitle">"家族发现圣水的神圣时刻"</div>
-            
-            <div class="painting-container">
-                <div class="painting-area" id="painting-area">
-                    <div class="painting-hotspot" style="top: 30%; left: 40%;" onclick="examineEyes()">
-                        👁️ 人物的眼神
+        function showPaintingPuzzle() {
+            const paintingHTML = `
+                <div class="door-interface">
+                    <div class="door-title">神秘的古典油画</div>
+                    <div class="door-subtitle">"家族发现圣水的神圣时刻"</div>
+                    
+                    <div class="painting-container">
+                        <div class="painting-area" id="painting-area">
+                            <div class="painting-hotspot" style="top: 30%; left: 40%;" onclick="examineEyes()">
+                                人物的眼神
+                            </div>
+                            <div class="painting-hotspot" style="top: 60%; left: 25%;" onclick="examineBottle()">
+                                圣水瓶
+                            </div>
+                            <div class="painting-hotspot" style="top: 70%; left: 65%;" onclick="examineBackground()">
+                                背景符号
+                            </div>
+                            <div class="painting-hotspot" style="top: 45%; left: 75%;" onclick="examineFrame()">
+                                画框刻文
+                            </div>
+                        </div>
                     </div>
-                    <div class="painting-hotspot" style="top: 60%; left: 25%;" onclick="examineBottle()">
-                        🍶 圣水瓶
+
+                    <div class="controls-container">
+                        <button class="door-button" onclick="useUltraviolet()">使用紫外灯</button>
+                        <button class="door-button" onclick="cleanPainting()">清理画面</button>
+                        <button class="door-button" onclick="checkReflection()">检查反光</button>
                     </div>
-                    <div class="painting-hotspot" style="top: 70%; left: 65%;" onclick="examineBackground()">
-                        🏞️ 背景符号
-                    </div>
-                    <div class="painting-hotspot" style="top: 45%; left: 75%;" onclick="examineFrame()">
-                        🖼️ 画框刻文
-                    </div>
+
+                    <div id="painting-message" class="hint-text"></div>
+                    <div class="hint-text">已发现线索: <span id="clue-count">0</span>/4</div>
                 </div>
-            </div>
-
-            <div class="controls-container">
-                <button class="door-button" onclick="useUltraviolet()">使用紫外灯</button>
-                <button class="door-button" onclick="cleanPainting()">清理画面</button>
-                <button class="door-button" onclick="checkReflection()">检查反光</button>
-            </div>
-
-            <div id="painting-message" class="hint-text"></div>
-            <div class="hint-text">已发现线索: <span id="clue-count">0</span>/4</div>
-        </div>
-    `;
-    
-    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', paintingHTML);
-    resetPaintingState();
-}
-
-// 油画页面状态
-let paintingState = {
-    cluesFound: 0,
-    uvUsed: false,
-    cleaned: false
-};
-
-function resetPaintingState() {
-    paintingState = {
-        cluesFound: 0,
-        uvUsed: false,
-        cleaned: false
-    };
-    updateClueCount();
-}
-
-function updateClueCount() {
-    const countElement = document.getElementById('clue-count');
-    if (countElement) {
-        countElement.textContent = paintingState.cluesFound;
-    }
-}
-
-function showPaintingMessage(message, type = 'info') {
-    const messageElement = document.getElementById('painting-message');
-    if (messageElement) {
-        const color = type === 'success' ? '#6b8e23' : type === 'error' ? '#8b4513' : '#e0d3b8';
-        messageElement.innerHTML = `<div style="color: ${color}; margin: 10px 0;">${message}</div>`;
-    }
-}
-
-// 检查人物眼神
-function examineEyes() {
-    if (!paintingState.cleaned) {
-        showPaintingMessage('画面太脏了，看不清人物的眼神细节。也许需要先清理一下？', 'error');
-        return;
-    }
-    
-    showPaintingMessage('你发现画中人物的眼神异常空洞，瞳孔中似乎反射着某种几何图案...', 'success');
-    addClue();
-}
-
-// 检查圣水瓶
-function examineBottle() {
-    showPaintingMessage('圣水瓶中流动着幽绿色的液体，瓶身上刻着:"EX INFERNO AD CAELUM"（从地狱到天堂）', 'success');
-    addClue();
-}
-
-// 检查背景符号
-function examineBackground() {
-    if (!paintingState.uvUsed) {
-        showPaintingMessage('背景看起来只是普通的风景，但总觉得有些不对劲...', 'error');
-        return;
-    }
-    
-    showPaintingMessage('在紫外线下，背景显现出隐藏的符号：一个被六芒星包围的黑洞图案！', 'success');
-    addClue();
-}
-
-// 检查画框刻文
-function examineFrame() {
-    showPaintingMessage('画框内侧刻着细小的文字："他赐予生命，却索取灵魂。非恩赐，实为借贷。"', 'success');
-    addClue();
-}
-
-// 使用紫外灯
-function useUltraviolet() {
-    paintingState.uvUsed = true;
-    const paintingArea = document.getElementById('painting-area');
-    if (paintingArea) {
-        paintingArea.style.border = '3px solid #9400d3';
-        paintingArea.style.background = 'linear-gradient(45deg, #2a1f1a, #4b0082)';
-    }
-    showPaintingMessage('紫外灯下，画面显现出隐藏的细节！快去检查背景！', 'success');
-}
-
-// 清理画面
-function cleanPainting() {
-    paintingState.cleaned = true;
-    const paintingArea = document.getElementById('painting-area');
-    if (paintingArea) {
-        paintingArea.style.background = 'rgba(139, 69, 19, 0.1)';
-    }
-    showPaintingMessage('清理后，画面的细节更加清晰了！现在可以检查人物眼神了。', 'success');
-}
-
-// 检查反光
-function checkReflection() {
-    if (paintingState.cluesFound >= 3) {
-        showPaintingMessage('在特定角度下，你发现油画表面反射出书房中其他物体的影像，似乎暗示着某种联系...', 'success');
-        if (paintingState.cluesFound === 3) {
-            addClue(); // 第四个线索
+            `;
+            
+            document.getElementById('closeup-view').insertAdjacentHTML('beforeend', paintingHTML);
+            resetPaintingState();
         }
-    } else {
-        showPaintingMessage('需要发现更多线索才能看出其中的规律...', 'error');
-    }
-}
 
-function addClue() {
-    if (paintingState.cluesFound < 4) {
-        paintingState.cluesFound++;
-        updateClueCount();
-        
-        if (paintingState.cluesFound === 4) {
-            showPaintingMessage('🎉 你发现了油画的所有秘密！画中隐藏的真相令人不安...', 'success');
-            setTimeout(() => {
-                showPaintingMessage('"我们崇拜的并非神明，而是囚禁我们的狱卒。"', 'success');
-            }, 3000);
+        // 油画页面状态
+        let paintingState = {
+            cluesFound: 0,
+            uvUsed: false,
+            cleaned: false
+        };
+
+        function resetPaintingState() {
+            paintingState = {
+                cluesFound: 0,
+                uvUsed: false,
+                cleaned: false
+            };
+            updateClueCount();
         }
-    }
-}
+
+        function updateClueCount() {
+            const countElement = document.getElementById('clue-count');
+            if (countElement) {
+                countElement.textContent = paintingState.cluesFound;
+            }
+        }
+
+        function showPaintingMessage(message, type = 'info') {
+            const messageElement = document.getElementById('painting-message');
+            if (messageElement) {
+                const color = type === 'success' ? '#6b8e23' : type === 'error' ? '#8b4513' : '#e0d3b8';
+                messageElement.innerHTML = `<div style="color: ${color}; margin: 10px 0;">${message}</div>`;
+            }
+        }
+
+        // 检查人物眼神
+        function examineEyes() {
+            if (!paintingState.cleaned) {
+                showPaintingMessage('画面太脏了，看不清人物的眼神细节。也许需要先清理一下？', 'error');
+                return;
+            }
+            
+            showPaintingMessage('你发现画中人物的眼神异常空洞，瞳孔中似乎反射着某种几何图案...', 'success');
+            addClue();
+        }
+
+        // 检查圣水瓶
+        function examineBottle() {
+            showPaintingMessage('圣水瓶中流动着幽绿色的液体，瓶身上刻着:"EX INFERNO AD CAELUM"（从地狱到天堂）', 'success');
+            addClue();
+        }
+
+        // 检查背景符号
+        function examineBackground() {
+            if (!paintingState.uvUsed) {
+                showPaintingMessage('背景看起来只是普通的风景，但总觉得有些不对劲...', 'error');
+                return;
+            }
+            
+            showPaintingMessage('在紫外线下，背景显现出隐藏的符号：一个被六芒星包围的黑洞图案！', 'success');
+            addClue();
+        }
+
+        // 检查画框刻文
+        function examineFrame() {
+            showPaintingMessage('画框内侧刻着细小的文字："他赐予生命，却索取灵魂。非恩赐，实为借贷。"', 'success');
+            addClue();
+        }
+
+        // 使用紫外灯
+        function useUltraviolet() {
+            paintingState.uvUsed = true;
+            const paintingArea = document.getElementById('painting-area');
+            if (paintingArea) {
+                paintingArea.style.border = '3px solid #9400d3';
+                paintingArea.style.background = 'linear-gradient(45deg, #2a1f1a, #4b0082)';
+            }
+            showPaintingMessage('紫外灯下，画面显现出隐藏的细节！快去检查背景！', 'success');
+        }
+
+        // 清理画面
+        function cleanPainting() {
+            paintingState.cleaned = true;
+            const paintingArea = document.getElementById('painting-area');
+            if (paintingArea) {
+                paintingArea.style.background = 'rgba(139, 69, 19, 0.1)';
+            }
+            showPaintingMessage('清理后，画面的细节更加清晰了！现在可以检查人物眼神了。', 'success');
+        }
+
+        // 检查反光
+        function checkReflection() {
+            if (paintingState.cluesFound >= 3) {
+                showPaintingMessage('在特定角度下，你发现油画表面反射出书房中其他物体的影像，似乎暗示着某种联系...', 'success');
+                if (paintingState.cluesFound === 3) {
+                    addClue(); // 第四个线索
+                }
+            } else {
+                showPaintingMessage('需要发现更多线索才能看出其中的规律...', 'error');
+            }
+        }
+
+        function addClue() {
+            if (paintingState.cluesFound < 4) {
+                paintingState.cluesFound++;
+                updateClueCount();
+                
+                if (paintingState.cluesFound === 4) {
+                    showPaintingMessage('🎉 你发现了油画的所有秘密！画中隐藏的真相令人不安...', 'success');
+                    setTimeout(() => {
+                        showPaintingMessage('"我们崇拜的并非神明，而是囚禁我们的狱卒。"', 'success');
+                    }, 3000);
+                }
+            }
+        }
+
         // ==================== 书桌页面 ====================
-function showDeskPuzzle() {
-    const deskHTML = `
-        <div class="door-interface">
-            <div class="door-title">家主的书桌</div>
-            <div class="door-subtitle">精致的桃花心木书桌，上面散落着文件和档案</div>
+        function showDeskPuzzle() {
+            const deskHTML = `
+                <div class="door-interface">
+                    <div class="door-title">家主的书桌</div>
+                    <div class="door-subtitle">精致的桃花心木书桌，上面散落着文件和档案</div>
+                    
+                    <div class="locks-container">
+                        <div class="lock-slot" onclick="examineDrawer()" style="cursor:pointer;">
+                            抽屉
+                        </div>
+                        <div class="lock-slot" onclick="readDiary()" style="cursor:pointer;">
+                            日记
+                        </div>
+                        <div class="lock-slot" onclick="checkAccounts()" style="cursor:pointer;">
+                            账本
+                        </div>
+                        <div class="lock-slot" onclick="examineLetters()" style="cursor:pointer;">
+                            信件
+                        </div>
+                    </div>
+
+                    <div class="symbols-container">
+                        <div class="sin-symbol" onclick="examineInkwell()" style="cursor:pointer;" title="墨水瓶">
+                            墨水瓶
+                        </div>
+                        <div class="sin-symbol" onclick="checkPhoto()" style="cursor:pointer;" title="照片">
+                            照片
+                        </div>
+                        <div class="sin-symbol" onclick="searchHidden()" style="cursor:pointer;" title="隐藏隔层">
+                            隐藏隔层
+                        </div>
+                    </div>
+
+                    <div class="controls-container">
+                        <button class="door-button" onclick="tryOpenSecret()">尝试打开秘密隔层</button>
+                        <button class="door-button" onclick="decipherCode()">破译密码</button>
+                    </div>
+
+                    <div id="desk-message-area"></div>
+                    <div class="hint-text">提示：仔细检查所有物品，寻找线索</div>
+                </div>
+            `;
             
-            <div class="locks-container">
-                <div class="lock-slot" onclick="examineDrawer()" style="cursor:pointer;">
-                    📁<br>抽屉
-                </div>
-                <div class="lock-slot" onclick="readDiary()" style="cursor:pointer;">
-                    📖<br>日记
-                </div>
-                <div class="lock-slot" onclick="checkAccounts()" style="cursor:pointer;">
-                    💰<br>账本
-                </div>
-                <div class="lock-slot" onclick="examineLetters()" style="cursor:pointer;">
-                    ✉️<br>信件
-                </div>
-            </div>
+            document.getElementById('closeup-view').insertAdjacentHTML('beforeend', deskHTML);
+        }
 
-            <div class="symbols-container">
-                <div class="sin-symbol" onclick="examineInkwell()" style="cursor:pointer;" title="墨水瓶">
-                    🖋️
-                </div>
-                <div class="sin-symbol" onclick="checkPhoto()" style="cursor:pointer;" title="照片">
-                    🖼️
-                </div>
-                <div class="sin-symbol" onclick="searchHidden()" style="cursor:pointer;" title="隐藏隔层">
-                    🔍
-                </div>
-            </div>
+        // 抽屉功能
+        function examineDrawer() {
+            const messages = [
+                "抽屉里有一些旧钥匙和印章",
+                "你发现了一把特殊的黄铜钥匙，上面刻着'VII'",
+                "抽屉底部有一些泛黄的地图草图",
+                "这里有一封被撕碎后又粘合的信件"
+            ];
+            showDeskMessage(messages[Math.floor(Math.random() * messages.length)], "success");
+        }
 
-            <div class="controls-container">
-                <button class="door-button" onclick="tryOpenSecret()">尝试打开秘密隔层</button>
-                <button class="door-button" onclick="decipherCode()">破译密码</button>
-            </div>
+        // 日记功能
+        function readDiary() {
+            const entries = [
+                "'3月15日：泉水带来的财富超乎想象，但代价是什么？'",
+                "'4月2日：伊桑那孩子又说些疯话，必须把他送走'", 
+                "'5月18日：晚上的低语声越来越清晰了...'",
+                "'6月30日：我们都被困在这里了，就像祭坛上的贡品'"
+            ];
+            showDeskMessage(`日记摘录：${entries[Math.floor(Math.random() * entries.length)]}`, "success");
+            unlockConnection('desk', 'readDiary');
+        }
 
-            <div id="desk-message-area"></div>
-            <div class="hint-text">提示：仔细检查所有物品，寻找线索</div>
-        </div>
-    `;
-    
-    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', deskHTML);
-}
+        // 账本功能  
+        function checkAccounts() {
+            showDeskMessage("账本显示大量资金流向一个名为'永恒之眼'的账户，用途不明", "error");
+        }
 
-// 抽屉功能
-function examineDrawer() {
-    const messages = [
-        "抽屉里有一些旧钥匙和印章",
-        "你发现了一把特殊的黄铜钥匙，上面刻着'VII'",
-        "抽屉底部有一些泛黄的地图草图",
-        "这里有一封被撕碎后又粘合的信件"
-    ];
-    showDeskMessage(messages[Math.floor(Math.random() * messages.length)], "success");
-}
+        // 信件功能
+        function examineLetters() {
+            showDeskMessage("信件中提到'逆卡巴拉的秘密'和'七重试炼'，似乎与大门有关", "success");
+        }
 
-// 日记功能
-function readDiary() {
-    const entries = [
-        "'3月15日：泉水带来的财富超乎想象，但代价是什么？'",
-        "'4月2日：伊桑那孩子又说些疯话，必须把他送走'", 
-        "'5月18日：晚上的低语声越来越清晰了...'",
-        "'6月30日：我们都被困在这里了，就像祭坛上的贡品'"
-    ];
-    showDeskMessage(`日记摘录：${entries[Math.floor(Math.random() * entries.length)]}`, "success");
-    unlockConnection('desk', 'readDiary');
-}
+        // 墨水瓶
+        function examineInkwell() {
+            showDeskMessage("墨水瓶底部刻着微小的文字：'真理藏于阴影之中'", "success");
+        }
 
-// 账本功能  
-function checkAccounts() {
-    showDeskMessage("账本显示大量资金流向一个名为'永恒之眼'的账户，用途不明", "error");
-}
+        // 照片
+        function checkPhoto() {
+            showDeskMessage("全家福照片中，某些家庭成员的眼睛被刻意涂黑", "error");
+        }
 
-// 信件功能
-function examineLetters() {
-    showDeskMessage("信件中提到'逆卡巴拉的秘密'和'七重试炼'，似乎与大门有关", "success");
-}
+        // 隐藏隔层
+        function searchHidden() {
+            showDeskMessage("你发现了一个隐藏隔层！但需要密码才能打开", "success");
+        }
 
-// 墨水瓶
-function examineInkwell() {
-    showDeskMessage("墨水瓶底部刻着微小的文字：'真理藏于阴影之中'", "success");
-}
+        // 尝试打开秘密隔层
+        function tryOpenSecret() {
+            showDeskMessage("隔层纹丝不动。你需要找到正确的开启方法", "error");
+        }
 
-// 照片
-function checkPhoto() {
-    showDeskMessage("全家福照片中，某些家庭成员的眼睛被刻意涂黑", "error");
-}
+        // 破译密码
+        function decipherCode() {
+            showDeskMessage("这些符号似乎与七宗罪的顺序有关...", "success");
+        }
 
-// 隐藏隔层
-function searchHidden() {
-    showDeskMessage("你发现了一个隐藏隔层！但需要密码才能打开", "success");
-}
+        // 显示消息的辅助函数
+        function showDeskMessage(message, type) {
+            const messageArea = document.getElementById('desk-message-area');
+            if (type === 'success') {
+                messageArea.innerHTML = `<div class="success-message">${message}</div>`;
+            } else {
+                messageArea.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+        }
 
-// 尝试打开秘密隔层
-function tryOpenSecret() {
-    showDeskMessage("隔层纹丝不动。你需要找到正确的开启方法", "error");
-}
-
-// 破译密码
-function decipherCode() {
-    showDeskMessage("这些符号似乎与七宗罪的顺序有关...", "success");
-}
-
-// 显示消息的辅助函数
-function showDeskMessage(message, type) {
-    const messageArea = document.getElementById('desk-message-area');
-    if (type === 'success') {
-        messageArea.innerHTML = `<div class="success-message">${message}</div>`;
-    } else {
-        messageArea.innerHTML = `<div class="error-message">${message}</div>`;
-    }
-}
         // ==================== 地图页面 ====================
-function showMapPuzzle() {
-    const mapHTML = `
-        <div class="door-interface" style="max-width: 800px;">
-            <div class="door-title">世界地图</div>
-            <div class="door-subtitle">"我们即是世界的中心" - 黑水家族格言</div>
-            
-            <!-- 地图可视化 -->
-            <div style="position: relative; margin: 20px auto; width: 300px; height: 200px; background: linear-gradient(135deg, #1e3c72, #2a5298); border: 3px solid #8b4513; border-radius: 10px;">
-                <!-- 庄园位置 -->
-                <div class="map-point" style="top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #d4af37;" 
-                     onclick="inspectManor()" title="黑水庄园">
-                    ★
+        function showMapPuzzle() {
+            const mapHTML = `
+                <div class="door-interface" style="max-width: 800px;">
+                    <div class="door-title">世界地图</div>
+                    <div class="door-subtitle">"我们即是世界的中心" - 黑水家族格言</div>
+                    
+                    <!-- 地图可视化 -->
+                    <div style="position: relative; margin: 20px auto; width: 300px; height: 200px; background: linear-gradient(135deg, #1e3c72, #2a5298); border: 3px solid #8b4513; border-radius: 10px;">
+                        <!-- 庄园位置 -->
+                        <div class="map-point" style="top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #d4af37;" 
+                             onclick="inspectManor()" title="黑水庄园">
+                            ★
+                        </div>
+                        
+                        <!-- 六个标记点 -->
+                        <div class="map-point" style="top: 20%; left: 70%;" onclick="inspectPoint('欧洲')" title="欧洲">Ⅰ</div>
+                        <div class="map-point" style="top: 40%; left: 85%;" onclick="inspectPoint('亚洲')" title="亚洲">Ⅱ</div>
+                        <div class="map-point" style="top: 70%; left: 80%;" onclick="inspectPoint('大洋洲')" title="大洋洲">Ⅲ</div>
+                        <div class="map-point" style="top: 80%; left: 40%;" onclick="inspectPoint('南美洲')" title="南美洲">Ⅳ</div>
+                        <div class="map-point" style="top: 40%; left: 15%;" onclick="inspectPoint('北美洲')" title="北美洲">Ⅴ</div>
+                        <div class="map-point" style="top: 20%; left: 30%;" onclick="inspectPoint('非洲')" title="非洲">Ⅵ</div>
+                    </div>
+
+                    <div class="controls-container">
+                        <button class="door-button" onclick="measureDistances()">测量距离</button>
+                        <button class="door-button" onclick="checkProjection()">检查投影</button>
+                        <button class="door-button" onclick="findAnomalies()">寻找异常</button>
+                    </div>
+
+                    <div id="map-message" style="min-height: 60px; margin-top: 20px;"></div>
+                    
+                    <div class="hint-text">点击地图上的标记点进行探索</div>
                 </div>
-                
-                <!-- 六个标记点 -->
-                <div class="map-point" style="top: 20%; left: 70%;" onclick="inspectPoint('欧洲')" title="欧洲">Ⅰ</div>
-                <div class="map-point" style="top: 40%; left: 85%;" onclick="inspectPoint('亚洲')" title="亚洲">Ⅱ</div>
-                <div class="map-point" style="top: 70%; left: 80%;" onclick="inspectPoint('大洋洲')" title="大洋洲">Ⅲ</div>
-                <div class="map-point" style="top: 80%; left: 40%;" onclick="inspectPoint('南美洲')" title="南美洲">Ⅳ</div>
-                <div class="map-point" style="top: 40%; left: 15%;" onclick="inspectPoint('北美洲')" title="北美洲">Ⅴ</div>
-                <div class="map-point" style="top: 20%; left: 30%;" onclick="inspectPoint('非洲')" title="非洲">Ⅵ</div>
-            </div>
-
-            <div class="controls-container">
-                <button class="door-button" onclick="measureDistances()">测量距离</button>
-                <button class="door-button" onclick="checkProjection()">检查投影</button>
-                <button class="door-button" onclick="findAnomalies()">寻找异常</button>
-            </div>
-
-            <div id="map-message" style="min-height: 60px; margin-top: 20px;"></div>
+            `;
             
-            <div class="hint-text">点击地图上的标记点进行探索</div>
-        </div>
-    `;
-    
-    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', mapHTML);
-}
+            document.getElementById('closeup-view').insertAdjacentHTML('beforeend', mapHTML);
+        }
 
-// 地图点样式（添加到CSS中）
-const mapStyle = `
-    .map-point {
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        background-color: rgba(139, 69, 19, 0.8);
-        border: 2px solid #e0d3b8;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        color: #e0d3b8;
-    }
-    .map-point:hover {
-        transform: scale(1.2);
-        background-color: rgba(160, 82, 45, 0.9);
-    }
-`;
+        // 注入CSS样式
+        if (!document.querySelector('#map-styles')) {
+            const styleElement = document.createElement('style');
+            styleElement.id = 'map-styles';
+            styleElement.textContent = `
+                .map-point {
+                    position: absolute;
+                    width: 30px;
+                    height: 30px;
+                    background-color: rgba(139, 69, 19, 0.8);
+                    border: 2px solid #e0d3b8;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    font-weight: bold;
+                    transition: all 0.3s ease;
+                    color: #e0d3b8;
+                }
+                .map-point:hover {
+                    transform: scale(1.2);
+                    background-color: rgba(160, 82, 45, 0.9);
+                }
+            `;
+            document.head.appendChild(styleElement);
+        }
 
-// 注入CSS样式
-if (!document.querySelector('#map-styles')) {
-    const styleElement = document.createElement('style');
-    styleElement.id = 'map-styles';
-    styleElement.textContent = mapStyle;
-    document.head.appendChild(styleElement);
-}
+        // 地图交互函数
+        function inspectManor() {
+            const messages = [
+                "黑水庄园被精确标记在地图的正中心",
+                "经纬度坐标显示：0°N, 0°E - 这在地理上是不可能的",
+                "庄园周围有六个等距的标记点，形成完美的六边形",
+                "地图比例严重失真，庄园的大小相当于一个大陆"
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            showMapMessage(randomMessage, 'success');
+            checkMapMarker();
+        }
 
-// 地图交互函数
-function inspectManor() {
-    const messages = [
-        "黑水庄园被精确标记在地图的正中心",
-        "经纬度坐标显示：0°N, 0°E - 这在地理上是不可能的",
-        "庄园周围有六个等距的标记点，形成完美的六边形",
-        "地图比例严重失真，庄园的大小相当于一个大陆"
-    ];
-    
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    showMapMessage(randomMessage, 'success');
-    checkMapMarker();
-}
+        function inspectPoint(region) {
+            const regionInfo = {
+                '欧洲': "边界扭曲，英伦三岛的位置完全错误",
+                '亚洲': "喜马拉雅山脉的高度被夸张了十倍",
+                '大洋洲': "澳大利亚的形状像被某种力量拉扯",
+                '南美洲': "亚马逊河流域的走向不符合任何已知地图",
+                '北美洲': "五大湖的位置出现了神秘的偏移", 
+                '非洲': "撒哈拉沙漠的面积被严重缩小"
+            };
+            
+            showMapMessage(`${region}: ${regionInfo[region]}`, 'error');
+            checkMapMarker();
+        }
 
-function inspectPoint(region) {
-    const regionInfo = {
-        '欧洲': "边界扭曲，英伦三岛的位置完全错误",
-        '亚洲': "喜马拉雅山脉的高度被夸张了十倍",
-        '大洋洲': "澳大利亚的形状像被某种力量拉扯",
-        '南美洲': "亚马逊河流域的走向不符合任何已知地图",
-        '北美洲': "五大湖的位置出现了神秘的偏移", 
-        '非洲': "撒哈拉沙漠的面积被严重缩小"
-    };
-    
-    showMapMessage(`${region}: ${regionInfo[region]}`, 'error');
-    checkMapMarker();
-}
+        function measureDistances() {
+            showMapMessage("测量结果：从庄园到所有六个标记点的距离完全相等 - 这在球面几何上不可能", 'error');
+        }
 
-function measureDistances() {
-    showMapMessage("测量结果：从庄园到所有六个标记点的距离完全相等 - 这在球面几何上不可能", 'error');
-}
+        function checkProjection() {
+            showMapMessage("地图投影分析：这不是墨卡托投影，也不是任何已知的投影方式。空间似乎在庄园周围发生了扭曲。", 'error');
+        }
 
-function checkProjection() {
-    showMapMessage("地图投影分析：这不是墨卡托投影，也不是任何已知的投影方式。空间似乎在庄园周围发生了扭曲。", 'error');
-}
+        function findAnomalies() {
+            const anomalies = [
+                "发现重力异常：庄园区域的等高线显示反重力现象",
+                "时间异常：根据星图标记，这张地图的时间坐标是混乱的", 
+                "空间异常：庄园周围的区域显示出非欧几里得几何特征",
+                "发现隐藏标记：六个点连接后形成逆卡巴拉符号"
+            ];
+            
+            const randomAnomaly = anomalies[Math.floor(Math.random() * anomalies.length)];
+            showMapMessage(`异常发现：${randomAnomaly}`, 'success');
+        }
 
-function findAnomalies() {
-    const anomalies = [
-        "发现重力异常：庄园区域的等高线显示反重力现象",
-        "时间异常：根据星图标记，这张地图的时间坐标是混乱的", 
-        "空间异常：庄园周围的区域显示出非欧几里得几何特征",
-        "发现隐藏标记：六个点连接后形成逆卡巴拉符号"
-    ];
-    
-    const randomAnomaly = anomalies[Math.floor(Math.random() * anomalies.length)];
-    showMapMessage(`异常发现：${randomAnomaly}`, 'success');
-}
+        function showMapMessage(message, type) {
+            const messageArea = document.getElementById('map-message');
+            const color = type === 'success' ? '#6b8e23' : '#8b4513';
+            messageArea.innerHTML = `
+                <div style="color: ${color}; font-size: 1.1em; text-align: center; padding: 10px; 
+                            background-color: rgba(42, 31, 26, 0.8); border-radius: 5px; border-left: 4px solid ${color};">
+                    ${message}
+                </div>
+            `;
+        }
 
-function showMapMessage(message, type) {
-    const messageArea = document.getElementById('map-message');
-    const color = type === 'success' ? '#6b8e23' : '#8b4513';
-    messageArea.innerHTML = `
-        <div style="color: ${color}; font-size: 1.1em; text-align: center; padding: 10px; 
-                    background-color: rgba(42, 31, 26, 0.8); border-radius: 5px; border-left: 4px solid ${color};">
-            ${message}
-        </div>
-    `;
-}
         function checkMapMarker() {
-    gameProgress.map.markersChecked++;
-    if (gameProgress.map.markersChecked >= gameProgress.map.totalMarkers) {
-        showClueMessage('所有标记点检查完毕！发现地图上的异常模式指向家族树...');
-        connectionsUnlocked.mapToFamily = true;
-        updateFamilyTreeButton();
-    }
-}
+            gameProgress.map.markersChecked++;
+            if (gameProgress.map.markersChecked >= gameProgress.map.totalMarkers) {
+                showClueMessage('所有标记点检查完毕！发现地图上的异常模式指向家族树...');
+                connectionsUnlocked.mapToFamily = true;
+                unlockConnection('map', 'checkAllMarkers');
+            }
+        }
+
         // ==================== 家族树页面 ====================
-function showFamilyTreePuzzle() {
-    const familyTreeHTML = `
-        <div class="door-interface" style="max-width: 800px;">
-            <div class="door-title">黑水家族谱系</div>
-            <div class="door-subtitle">被诅咒的血脉，被掩盖的真相</div>
-            
-            <!-- 家族树图表 -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 30px 0; padding: 20px; background: rgba(139, 69, 19, 0.1); border-radius: 10px; border: 2px solid #8b4513;">
-                <!-- 第一代 -->
-                <div class="family-member" onclick="examineMember('founder')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.3); border-radius: 5px; cursor: pointer;">
-                    <div>🕴️</div>
-                    <div>埃德蒙·黑水</div>
-                    <div style="font-size: 0.8em;">1640-1675</div>
-                </div>
-                
-                <!-- 第二代 -->
-                <div class="family-member" onclick="examineMember('son1')" style="grid-column: 1; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.2); border-radius: 5px; cursor: pointer;">
-                    <div>👨</div>
-                    <div>威廉·黑水</div>
-                    <div style="font-size: 0.8em;">1660-1690</div>
-                </div>
-                
-                <div class="family-member" onclick="examineMember('son2')" style="grid-column: 3; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.2); border-radius: 5px; cursor: pointer;">
-                    <div>👨</div>
-                    <div>托马斯·黑水</div>
-                    <div style="font-size: 0.8em;">1662-1720</div>
-                </div>
-                
-                <!-- 第三代 -->
-                <div class="family-member" onclick="examineMember('grandson1')" style="grid-column: 1; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.15); border-radius: 5px; cursor: pointer;">
-                    <div>🧑</div>
-                    <div>亨利·黑水</div>
-                    <div style="font-size: 0.8em;">1685-1710</div>
-                </div>
-                
-                <div class="family-member" onclick="examineMember('grandson2')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.15); border-radius: 5px; cursor: pointer;">
-                    <div>🧑</div>
-                    <div>查尔斯·黑水</div>
-                    <div style="font-size: 0.8em;">1688-1745</div>
-                </div>
-                
-                <div class="family-member" onclick="examineMember('grandson3')" style="grid-column: 3; text-align: center; padding: 10px; background: rgba(178, 34, 34, 0.3); border-radius: 5px; cursor: pointer; text-decoration: line-through;">
-                    <div>💀</div>
-                    <div>亚瑟·黑水</div>
-                    <div style="font-size: 0.8em;">1690-1715</div>
-                </div>
-                
-                <!-- 第四代 -->
-                <div class="family-member" onclick="examineMember('greatgrandson')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.1); border-radius: 5px; cursor: pointer;">
-                    <div>👦</div>
-                    <div>爱德华·黑水</div>
-                    <div style="font-size: 0.8em;">1710-1780</div>
-                </div>
-                
-                <!-- 第五代 -->
-                <div class="family-member" onclick="examineMember('blind')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(106, 90, 205, 0.3); border-radius: 5px; cursor: pointer;">
-                    <div>👁️</div>
-                    <div>伊桑·黑水</div>
-                    <div style="font-size: 0.8em;">1735-???</div>
-                </div>
-            </div>
-            
-            <!-- 控制按钮 -->
-            <div class="controls-container">
-                <button class="door-button" onclick="analyzePattern()">分析死亡模式</button>
-                <button class="door-button" onclick="checkBloodline()">检查血脉纯度</button>
-                <button class="door-button" onclick="findSecrets()">寻找隐藏信息</button>
-            </div>
-            
-            <!-- 信息显示区域 -->
-            <div id="family-message" style="min-height: 60px; margin-top: 20px;"></div>
-            
-            <div class="hint-text">点击家族成员查看详细信息</div>
-        </div>
-    `;
-    
-    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', familyTreeHTML);
-}
-
-// 查看家族成员信息
-function examineMember(memberId) {
-    const messages = {
-        'founder': '家族创始人埃德蒙·黑水。记录显示他在35岁时突然暴富，同年建立了这座庄园。',
-        'son1': '长子威廉，30岁时神秘死亡。尸体被发现时面容如20岁青年。',
-        'son2': '次子托马斯，活了58岁，是早期家族中最长寿者。但晚年陷入疯狂。',
-        'grandson1': '亨利，25岁死亡。死因记录为"意外"，但细节被涂改。',
-        'grandson2': '查尔斯，57岁死亡。开始出现严重的遗传疾病。',
-        'grandson3': '亚瑟，25岁被从族谱中划去。据说他试图揭露家族秘密。',
-        'greatgrandson': '爱德华，70岁死亡。开始实行严格的近亲通婚政策。',
-        'blind': '伊桑，第五代。天生失明，但据说他能"看见"别人看不见的东西。被家族流放。'
-    };
-    
-    const messageArea = document.getElementById('family-message');
-    messageArea.innerHTML = `<div class="success-message">${messages[memberId]}</div>`;
-}
-
-// 分析死亡模式
-function analyzePattern() {
-    const messageArea = document.getElementById('family-message');
-    messageArea.innerHTML = `
-        <div class="error-message">
-            <strong>死亡模式分析：</strong><br>
-            • 35%的家族成员在25-30岁死亡<br>
-            • 死亡原因大多记录模糊<br>
-            • 尸体普遍保持年轻状态<br>
-            • 这与"圣水"的副作用描述吻合
-        </div>
-    `;
-}
-
-// 检查血脉纯度  
-function checkBloodline() {
-    const messageArea = document.getElementById('family-message');
-    messageArea.innerHTML = `
-        <div class="error-message">
-            <strong>血脉纯度检查：</strong><br>
-            • 第四代开始实行堂兄妹通婚<br>
-            • 第五代出现先天性疾病<br>
-            • 近亲系数高达0.25<br>
-            • 为了保持"神圣血脉"不惜代价
-        </div>
-    `;
-}
-
-// 寻找隐藏信息
-function findSecrets() {
-    const messageArea = document.getElementById('family-message');
-    messageArea.innerHTML = `
-        <div class="success-message">
-            <strong>隐藏信息发现：</strong><br>
-            用紫外线照射族谱，发现伊桑留下的暗语：<br>
-            <em>"血脉非祝福，实为牢笼。七代之内，必遭反噬。"</em>
-        </div>
-    `;
-}
-        // ==================== 魔药桌子页面 ====================
-function showPotionPuzzle() {
-     potionState = {
-        ingredients: [],
-        step: 0,
-        isBrewing: false
-    };
-    const potionHTML = `
-        <div class="door-interface">
-            <div class="door-title">炼金术工作台</div>
-            <div class="door-subtitle">"翠玉之秘" - 圣水的炼制</div>
-            
-            <div style="margin: 20px 0; text-align: left;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
-                    <div>
-                        <h3 style="color: #d4af37; margin-bottom: 10px;">原料区</h3>
-                        <div class="ingredient" onclick="selectIngredient('泉水')">
-                            💧 处女地之泪 (泉水)
+        function showFamilyTreePuzzle() {
+            const familyTreeHTML = `
+                <div class="door-interface" style="max-width: 800px;">
+                    <div class="door-title">黑水家族谱系</div>
+                    <div class="door-subtitle">被诅咒的血脉，被掩盖的真相</div>
+                    
+                    <!-- 家族树图表 -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 30px 0; padding: 20px; background: rgba(139, 69, 19, 0.1); border-radius: 10px; border: 2px solid #8b4513;">
+                        <!-- 第一代 -->
+                        <div class="family-member" onclick="examineMember('founder')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.3); border-radius: 5px; cursor: pointer;">
+                            <div>创始人</div>
+                            <div>埃德蒙·黑水</div>
+                            <div style="font-size: 0.8em;">1640-1675</div>
                         </div>
-                        <div class="ingredient" onclick="selectIngredient('矿石')">
-                            ⚪ 月光石粉末
+                        
+                        <!-- 第二代 -->
+                        <div class="family-member" onclick="examineMember('son1')" style="grid-column: 1; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.2); border-radius: 5px; cursor: pointer;">
+                            <div>长子</div>
+                            <div>威廉·黑水</div>
+                            <div style="font-size: 0.8em;">1660-1690</div>
                         </div>
-                        <div class="ingredient" onclick="selectIngredient('植物')">
-                            🌿 夜光蘑菇
+                        
+                        <div class="family-member" onclick="examineMember('son2')" style="grid-column: 3; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.2); border-radius: 5px; cursor: pointer;">
+                            <div>次子</div>
+                            <div>托马斯·黑水</div>
+                            <div style="font-size: 0.8em;">1662-1720</div>
                         </div>
-                        <div class="ingredient" onclick="selectIngredient('特殊')">
-                            🔥 地心之火种
+                        
+                        <!-- 第三代 -->
+                        <div class="family-member" onclick="examineMember('grandson1')" style="grid-column: 1; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.15); border-radius: 5px; cursor: pointer;">
+                            <div>孙辈</div>
+                            <div>亨利·黑水</div>
+                            <div style="font-size: 0.8em;">1685-1710</div>
+                        </div>
+                        
+                        <div class="family-member" onclick="examineMember('grandson2')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.15); border-radius: 5px; cursor: pointer;">
+                            <div>孙辈</div>
+                            <div>查尔斯·黑水</div>
+                            <div style="font-size: 0.8em;">1688-1745</div>
+                        </div>
+                        
+                        <div class="family-member" onclick="examineMember('grandson3')" style="grid-column: 3; text-align: center; padding: 10px; background: rgba(178, 34, 34, 0.3); border-radius: 5px; cursor: pointer; text-decoration: line-through;">
+                            <div>除名</div>
+                            <div>亚瑟·黑水</div>
+                            <div style="font-size: 0.8em;">1690-1715</div>
+                        </div>
+                        
+                        <!-- 第四代 -->
+                        <div class="family-member" onclick="examineMember('greatgrandson')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(107, 142, 35, 0.1); border-radius: 5px; cursor: pointer;">
+                            <div>曾孙</div>
+                            <div>爱德华·黑水</div>
+                            <div style="font-size: 0.8em;">1710-1780</div>
+                        </div>
+                        
+                        <!-- 第五代 -->
+                        <div class="family-member" onclick="examineMember('blind')" style="grid-column: 2; text-align: center; padding: 10px; background: rgba(106, 90, 205, 0.3); border-radius: 5px; cursor: pointer;">
+                            <div>盲者</div>
+                            <div>伊桑·黑水</div>
+                            <div style="font-size: 0.8em;">1735-???</div>
                         </div>
                     </div>
                     
-                    <div>
-                        <h3 style="color: #d4af37; margin-bottom: 10px;">炼制步骤</h3>
-                        <div id="potion-steps">
-                            <div class="step">1. 选择基础原料</div>
-                            <div class="step">2. 添加催化剂</div>
-                            <div class="step">3. 控制火候</div>
-                            <div class="step">4. 完成炼制</div>
+                    <!-- 控制按钮 -->
+                    <div class="controls-container">
+                        <button class="door-button" onclick="analyzePattern()">分析死亡模式</button>
+                        <button class="door-button" onclick="checkBloodline()">检查血脉纯度</button>
+                        <button class="door-button" onclick="findSecrets()">寻找隐藏信息</button>
+                    </div>
+                    
+                    <!-- 信息显示区域 -->
+                    <div id="family-message" style="min-height: 60px; margin-top: 20px;"></div>
+                    
+                    <div class="hint-text">点击家族成员查看详细信息</div>
+                </div>
+            `;
+            
+            document.getElementById('closeup-view').insertAdjacentHTML('beforeend', familyTreeHTML);
+        }
+
+        // 查看家族成员信息
+        function examineMember(memberId) {
+            const messages = {
+                'founder': '家族创始人埃德蒙·黑水。记录显示他在35岁时突然暴富，同年建立了这座庄园。',
+                'son1': '长子威廉，30岁时神秘死亡。尸体被发现时面容如20岁青年。',
+                'son2': '次子托马斯，活了58岁，是早期家族中最长寿者。但晚年陷入疯狂。',
+                'grandson1': '亨利，25岁死亡。死因记录为"意外"，但细节被涂改。',
+                'grandson2': '查尔斯，57岁死亡。开始出现严重的遗传疾病。',
+                'grandson3': '亚瑟，25岁被从族谱中划去。据说他试图揭露家族秘密。',
+                'greatgrandson': '爱德华，70岁死亡。开始实行严格的近亲通婚政策。',
+                'blind': '伊桑，第五代。天生失明，但据说他能"看见"别人看不见的东西。被家族流放。'
+            };
+            
+            const messageArea = document.getElementById('family-message');
+            messageArea.innerHTML = `<div class="success-message">${messages[memberId]}</div>`;
+        }
+
+        // 分析死亡模式
+        function analyzePattern() {
+            const messageArea = document.getElementById('family-message');
+            messageArea.innerHTML = `
+                <div class="error-message">
+                    <strong>死亡模式分析：</strong><br>
+                    • 35%的家族成员在25-30岁死亡<br>
+                    • 死亡原因大多记录模糊<br>
+                    • 尸体普遍保持年轻状态<br>
+                    • 这与"圣水"的副作用描述吻合
+                </div>
+            `;
+        }
+
+        // 检查血脉纯度  
+        function checkBloodline() {
+            const messageArea = document.getElementById('family-message');
+            messageArea.innerHTML = `
+                <div class="error-message">
+                    <strong>血脉纯度检查：</strong><br>
+                    • 第四代开始实行堂兄妹通婚<br>
+                    • 第五代出现先天性疾病<br>
+                    • 近亲系数高达0.25<br>
+                    • 为了保持"神圣血脉"不惜代价
+                </div>
+            `;
+        }
+
+        // 寻找隐藏信息
+        function findSecrets() {
+            const messageArea = document.getElementById('family-message');
+            messageArea.innerHTML = `
+                <div class="success-message">
+                    <strong>隐藏信息发现：</strong><br>
+                    用紫外线照射族谱，发现伊桑留下的暗语：<br>
+                    <em>"血脉非祝福，实为牢笼。七代之内，必遭反噬。"</em>
+                </div>
+            `;
+        }
+
+        // ==================== 魔药桌子页面 ====================
+        function showPotionPuzzle() {
+            potionState = {
+                ingredients: [],
+                step: 0,
+                isBrewing: false
+            };
+            const potionHTML = `
+                <div class="door-interface">
+                    <div class="door-title">炼金术工作台</div>
+                    <div class="door-subtitle">"翠玉之秘" - 圣水的炼制</div>
+                    
+                    <div style="margin: 20px 0; text-align: left;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                            <div>
+                                <h3 style="color: #d4af37; margin-bottom: 10px;">原料区</h3>
+                                <div class="ingredient" onclick="selectIngredient('泉水')">
+                                    处女地之泪 (泉水)
+                                </div>
+                                <div class="ingredient" onclick="selectIngredient('矿石')">
+                                    月光石粉末
+                                </div>
+                                <div class="ingredient" onclick="selectIngredient('植物')">
+                                    夜光蘑菇
+                                </div>
+                                <div class="ingredient" onclick="selectIngredient('特殊')">
+                                    地心之火种
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 style="color: #d4af37; margin-bottom: 10px;">炼制步骤</h3>
+                                <div id="potion-steps">
+                                    <div class="step">1. 选择基础原料</div>
+                                    <div class="step">2. 添加催化剂</div>
+                                    <div class="step">3. 控制火候</div>
+                                    <div class="step">4. 完成炼制</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <div id="cauldron" style="border: 2px solid #8b4513; padding: 15px; min-height: 80px; border-radius: 10px; background: rgba(139, 69, 19, 0.2);">
+                                <div id="potion-content" style="text-align: center; color: #a08c6c;">
+                                    坩埚空空如也...
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div style="margin: 20px 0;">
-                    <div id="cauldron" style="border: 2px solid #8b4513; padding: 15px; min-height: 80px; border-radius: 10px; background: rgba(139, 69, 19, 0.2);">
-                        <div id="potion-content" style="text-align: center; color: #a08c6c;">
-                            坩埚空空如也...
-                        </div>
+
+                    <div class="controls-container">
+                        <button class="door-button" onclick="startBrewing()" id="brew-btn">开始炼制</button>
+                        <button class="door-button" onclick="resetPotion()">清空坩埚</button>
+                        <button class="door-button" onclick="readFormula()">查看配方</button>
                     </div>
+
+                    <div id="potion-message" style="min-height: 40px; margin-top: 15px;"></div>
+                    <div class="hint-text" id="potion-hint">提示：正确的配方记录在炼金手稿中</div>
                 </div>
-            </div>
+            `;
+            
+            document.getElementById('closeup-view').insertAdjacentHTML('beforeend', potionHTML);
+        }
 
-            <div class="controls-container">
-                <button class="door-button" onclick="startBrewing()" id="brew-btn">开始炼制</button>
-                <button class="door-button" onclick="resetPotion()">清空坩埚</button>
-                <button class="door-button" onclick="readFormula()">查看配方</button>
-            </div>
+        // 魔药炼制状态
+        let potionState = {
+            ingredients: [],
+            step: 0,
+            isBrewing: false
+        };
 
-            <div id="potion-message" style="min-height: 40px; margin-top: 15px;"></div>
-            <div class="hint-text" id="potion-hint">提示：正确的配方记录在炼金手稿中</div>
-        </div>
-    `;
-    
-    document.getElementById('closeup-view').insertAdjacentHTML('beforeend', potionHTML);
-}
-
-// 魔药炼制状态
-let potionState = {
-    ingredients: [],
-    step: 0,
-    isBrewing: false
-};
-
-function selectIngredient(ingredient) {
-    if (potionState.isBrewing) {
-        showPotionMessage("正在炼制中，无法添加原料！", "error");
-        return;
-    }
-    
-    if (potionState.ingredients.length >= 3) {
-        showPotionMessage("坩埚已满，无法添加更多原料！", "error");
-        return;
-    }
-    
-    potionState.ingredients.push(ingredient);
-    updateCauldron();
-    showPotionMessage(`添加了：${ingredient}`, "success");
-}
-
-function updateCauldron() {
-    const content = document.getElementById('potion-content');
-    if (potionState.ingredients.length === 0) {
-        content.innerHTML = "坩埚空空如也...";
-        content.style.color = "#a08c6c";
-    } else {
-        const ingredientsText = potionState.ingredients.map(ing => {
-            switch(ing) {
-                case '泉水': return '💧';
-                case '矿石': return '⚪';
-                case '植物': return '🌿';
-                case '特殊': return '🔥';
-                default: return ing;
+        function selectIngredient(ingredient) {
+            if (potionState.isBrewing) {
+                showPotionMessage("正在炼制中，无法添加原料！", "error");
+                return;
             }
-        }).join(' + ');
-        
-        content.innerHTML = `坩埚内容：${ingredientsText}`;
-        content.style.color = "#e0d3b8";
-    }
-    
-    // 更新步骤高亮
-    updateBrewingSteps();
-}
-
-function updateBrewingSteps() {
-    const steps = document.querySelectorAll('.step');
-    steps.forEach((step, index) => {
-        if (index === potionState.step) {
-            step.style.color = "#d4af37";
-            step.style.fontWeight = "bold";
-        } else {
-            step.style.color = "#e0d3b8";
-            step.style.fontWeight = "normal";
-        }
-    });
-}
-
-function startBrewing() {
-    if (potionState.ingredients.length === 0) {
-        showPotionMessage("坩埚是空的！请先添加原料。", "error");
-        return;
-    }
-    
-    if (potionState.isBrewing) {
-        showPotionMessage("已经在炼制中了！", "error");
-        return;
-    }
-    
-    potionState.isBrewing = true;
-    const brewBtn = document.getElementById('brew-btn');
-    brewBtn.disabled = true;
-    brewBtn.textContent = "炼制中...";
-    
-    showPotionMessage("开始炼制...坩埚开始发出奇异的光芒", "success");
-    
-    // 模拟炼制过程
-    setTimeout(() => {
-        potionState.step = 1;
-        updateBrewingSteps();
-        showPotionMessage("加入催化剂...液体开始变色", "success");
-    }, 1500);
-    
-    setTimeout(() => {
-        potionState.step = 2;
-        updateBrewingSteps();
-        showPotionMessage("控制火候...液体开始沸腾", "success");
-    }, 3000);
-    
-    setTimeout(() => {
-        potionState.step = 3;
-        updateBrewingSteps();
-        checkPotionResult();
-    }, 4500);
-}
-
-function checkPotionResult() {
-    const correctRecipe = ['泉水', '植物', '特殊']; // 正确配方：泉水 + 夜光蘑菇 + 地心之火种
-    
-    const isCorrect = potionState.ingredients.length === 3 && 
-                     potionState.ingredients[0] === correctRecipe[0] &&
-                     potionState.ingredients[1] === correctRecipe[1] &&
-                     potionState.ingredients[2] === correctRecipe[2];
-    
-    const brewBtn = document.getElementById('brew-btn');
-    
-    if (isCorrect) {
-        showPotionMessage("🎉 炼制成功！获得了'翠玉圣水'！液体发出幽绿色的光芒。", "success");
-        document.getElementById('potion-content').innerHTML = "💚 翠玉圣水 - 散发着奇异的能量";
-        document.getElementById('potion-content').style.color = "#32cd32";
-    } else {
-        showPotionMessage("💥 炼制失败！液体变成了浑浊的黑色。配方似乎不对...", "error");
-        document.getElementById('potion-content').innerHTML = "⚫ 失败的药剂 - 散发着恶臭";
-        document.getElementById('potion-content').style.color = "#8b4513";
-    }
-    
-    potionState.isBrewing = false;
-    brewBtn.disabled = false;
-    brewBtn.textContent = "开始炼制";
-}
-
-function resetPotion() {
-    if (potionState.isBrewing) {
-        showPotionMessage("正在炼制中，无法清空！", "error");
-        return;
-    }
-    
-    potionState.ingredients = [];
-    potionState.step = 0;
-    updateCauldron();
-    updateBrewingSteps();
-    showPotionMessage("坩埚已清空", "error");
-    
-    const messageDiv = document.getElementById('potion-message');
-    messageDiv.innerHTML = '';
-}
-
-function readFormula() {
-    showPotionMessage(`
-        《翠玉之秘》配方：<br>
-        • 处女地之泪 (泉水) 💧<br>
-        • 夜光蘑菇 🌿<br>  
-        • 地心之火种 🔥<br><br>
-        炼制步骤必须严格按照顺序！
-    `, "success");
-}
-
-function showPotionMessage(message, type) {
-    const messageDiv = document.getElementById('potion-message');
-    messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
-}
-        // ==================== 连接系统 ====================
-function unlockConnection(fromPage, trigger) {
-    // 更新进度
-    if (fromPage === 'desk' && trigger === 'readDiary') {
-        gameProgress.desk.diaryRead = true;
-        showClueMessage('新的线索：地图上的标记点似乎很重要！现在可以去检查地图了。');
-        connectionsUnlocked.deskToMap = true;
-        updateMapButton();
-    }
-    
-    // 检查是否可以前往二楼
-    checkSecondFloorAccess();
-}
-
-function showClueMessage(message) {
-    // 创建线索提示
-    const clueHTML = `
-        <div class="puzzle-interface" style="background: rgba(75, 0, 130, 0.95); border: 2px solid #9370db; z-index: 1000;">
-            <div class="puzzle-title">🔍 发现线索</div>
-            <div style="padding: 20px; font-size: 1.1em;">${message}</div>
-            <div class="puzzle-controls">
-                <button class="puzzle-button" onclick="this.parentElement.parentElement.remove()">继续探索</button>
-            </div>
-        </div>
-    `;
-    
-    // 添加到页面
-    document.body.insertAdjacentHTML('beforeend', clueHTML);
-}
-
-function updateMapButton() {
-    // 更新大厅中的地图按钮提示
-    const mapDot = document.querySelector('[data-wall-id="map"]');
-    if (mapDot && connectionsUnlocked.deskToMap) {
-        const tooltip = mapDot.querySelector('.dot-tooltip');
-        if (tooltip) {
-            tooltip.innerHTML = '地图 <span style="color: #ffd700;">(新线索!)</span>';
-        }
-        mapDot.style.border = '2px solid #ffd700';
-        mapDot.style.background = 'rgba(255, 215, 0, 0.3)';
-    }
-}
-
-function updateFamilyTreeButton() {
-    // 更新大厅中的家族树按钮提示
-    const familyDot = document.querySelector('[data-wall-id="family-tree"]');
-    if (familyDot && connectionsUnlocked.mapToFamily) {
-        const tooltip = familyDot.querySelector('.dot-tooltip');
-        if (tooltip) {
-            tooltip.innerHTML = '家族树 <span style="color: #ffd700;">(新线索!)</span>';
-        }
-        familyDot.style.border = '2px solid #ffd700';
-        familyDot.style.background = 'rgba(255, 215, 0, 0.3)';
-    }
-}
-
-function checkSecondFloorAccess() {
-    const allSolved = 
-        gameProgress.desk.diaryRead &&
-        gameProgress.map.markersChecked >= 6 &&
-        gameProgress.familyTree.secretFound &&
-        gameProgress.potionTable.recipeCompleted &&
-        gameProgress.painting.cluesFound >= 4 &&
-        gameProgress.door.unlocked;
-    
-    if (allSolved && !connectionsUnlocked.toSecondFloor) {
-        connectionsUnlocked.toSecondFloor = true;
-        showSecondFloorEntrance();
-    }
-}
-
-// 🆕 二楼入口函数
-function showSecondFloorEntrance() {
-    // 在大厅添加通往二楼的入口
-    const hallView = document.getElementById('hall-view');
-    
-    // 检查是否已经存在二楼入口
-    if (document.querySelector('[data-wall-id="second-floor"]')) {
-        return;
-    }
-    
-    const secondFloorDot = document.createElement('div');
-    secondFloorDot.className = 'interaction-dot';
-    secondFloorDot.dataset.wallId = 'second-floor';
-    secondFloorDot.style.left = '50%';
-    secondFloorDot.style.top = '50%';
-    secondFloorDot.style.background = 'rgba(255, 215, 0, 0.5)';
-    secondFloorDot.style.border = '3px solid #ffd700';
-    secondFloorDot.style.width = '20px';
-    secondFloorDot.style.height = '20px';
-    
-    secondFloorDot.innerHTML = `
-        <div class="dot-tooltip" style="top: -50px; left: 50%; transform: translateX(-50%); background: rgba(255, 215, 0, 0.9); color: #000; font-weight: bold;">
-            🏰 通往二楼
-        </div>
-    `;
-    
-    secondFloorDot.onclick = () => showSecondFloorScene();
-    hallView.appendChild(secondFloorDot);
-    
-    showClueMessage('🎉 通往二楼的通道已经打开！点击大厅中央前往二楼。');
-}
-
-// 🆕 二楼场景
-function showSecondFloorScene() {
-    const secondFloorHTML = `
-        <div class="door-interface" style="background: rgba(0,0,0,0.9); max-width: 600px;">
-            <div class="door-title">🏰 二楼 · 真相之间</div>
-            <div class="door-subtitle">时间的尽头，命运的彼岸</div>
             
-            <div style="margin: 30px 0; text-align: left; line-height: 1.6; font-size: 1.1em;">
-                <p>你登上了庄园的二楼，这里与楼下的奢华截然不同...</p>
-                <p>房间中央悬浮着一个漆黑的球体，它吞噬着周围的光线。</p>
-                <p>小女儿伊莎贝拉站在黑洞边缘，喃喃自语："我必须回去...改变这一切..."</p>
-            </div>
+            if (potionState.ingredients.length >= 3) {
+                showPotionMessage("坩埚已满，无法添加更多原料！", "error");
+                return;
+            }
             
-            <div class="controls-container">
-                <button class="door-button" onclick="talkToDaughter()">与伊莎贝拉对话</button>
-                <button class="door-button" onclick="approachBlackHole()">接近黑洞</button>
-                <button class="door-button" onclick="observeRoom()">观察房间</button>
-            </div>
+            potionState.ingredients.push(ingredient);
+            updateCauldron();
+            showPotionMessage(`添加了：${ingredient}`, "success");
+        }
+
+        function updateCauldron() {
+            const content = document.getElementById('potion-content');
+            if (potionState.ingredients.length === 0) {
+                content.innerHTML = "坩埚空空如也...";
+                content.style.color = "#a08c6c";
+            } else {
+                const ingredientsText = potionState.ingredients.map(ing => {
+                    switch(ing) {
+                        case '泉水': return '泉水';
+                        case '矿石': return '矿石';
+                        case '植物': return '蘑菇';
+                        case '特殊': return '火种';
+                        default: return ing;
+                    }
+                }).join(' + ');
+                
+                content.innerHTML = `坩埚内容：${ingredientsText}`;
+                content.style.color = "#e0d3b8";
+            }
             
-            <div id="second-floor-message" style="min-height: 80px; margin-top: 20px;"></div>
-        </div>
-    `;
-    
-    // 清空当前视图并添加二楼场景
-    const closeupView = document.getElementById('closeup-view');
-    closeupView.innerHTML = '<button id="return-button">← 返回大厅</button>';
-    closeupView.insertAdjacentHTML('beforeend', secondFloorHTML);
-    closeupView.classList.add('active');
-    
-    // 重新绑定返回按钮
-    document.getElementById('return-button').addEventListener('click', () => {
-        closeupView.classList.remove('active');
-        setTimeout(() => {
-            document.getElementById('hall-view').style.opacity = 1;
-        }, 500);
-    });
-}
+            // 更新步骤高亮
+            updateBrewingSteps();
+        }
 
-// 二楼交互函数
-function talkToDaughter() {
-    document.getElementById('second-floor-message').innerHTML = `
-        <div class="success-message">
-            "你终于来了...时间不多了。"<br>
-            "圣水不是恩赐，是诅咒。我们都被困在了时间的循环里。"<br>
-            "只有打破七重封印，才能结束这一切..."
-        </div>
-    `;
-}
+        function updateBrewingSteps() {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                if (index === potionState.step) {
+                    step.style.color = "#d4af37";
+                    step.style.fontWeight = "bold";
+                } else {
+                    step.style.color = "#e0d3b8";
+                    step.style.fontWeight = "normal";
+                }
+            });
+        }
 
-function approachBlackHole() {
-    document.getElementById('second-floor-message').innerHTML = `
-        <div class="error-message">
-            黑洞产生强大的引力，你无法再前进一步。<br>
-            时间在这里变得扭曲而混乱，你能看到过去和未来的片段...
-        </div>
-    `;
-}
+        function startBrewing() {
+            if (potionState.ingredients.length === 0) {
+                showPotionMessage("坩埚是空的！请先添加原料。", "error");
+                return;
+            }
+            
+            if (potionState.isBrewing) {
+                showPotionMessage("已经在炼制中了！", "error");
+                return;
+            }
+            
+            potionState.isBrewing = true;
+            const brewBtn = document.getElementById('brew-btn');
+            brewBtn.disabled = true;
+            brewBtn.textContent = "炼制中...";
+            
+            showPotionMessage("开始炼制...坩埚开始发出奇异的光芒", "success");
+            
+            // 模拟炼制过程
+            setTimeout(() => {
+                potionState.step = 1;
+                updateBrewingSteps();
+                showPotionMessage("加入催化剂...液体开始变色", "success");
+            }, 1500);
+            
+            setTimeout(() => {
+                potionState.step = 2;
+                updateBrewingSteps();
+                showPotionMessage("控制火候...液体开始沸腾", "success");
+            }, 3000);
+            
+            setTimeout(() => {
+                potionState.step = 3;
+                updateBrewingSteps();
+                checkPotionResult();
+            }, 4500);
+        }
 
-function observeRoom() {
-    document.getElementById('second-floor-message').innerHTML = `
-        <div class="success-message">
-            墙壁上刻满了奇怪的符号和方程式：<br>
-            "E = mc² → E = mc³"<br>
-            "时间流速：1:1000"<br>
-            "第七代：终结或新生"
-        </div>
-    `;
-}
-     
-        
+        function checkPotionResult() {
+            const correctRecipe = ['泉水', '植物', '特殊']; // 正确配方：泉水 + 夜光蘑菇 + 地心之火种
+            
+            const isCorrect = potionState.ingredients.length === 3 && 
+                             potionState.ingredients[0] === correctRecipe[0] &&
+                             potionState.ingredients[1] === correctRecipe[1] &&
+                             potionState.ingredients[2] === correctRecipe[2];
+            
+            const brewBtn = document.getElementById('brew-btn');
+            
+            if (isCorrect) {
+                showPotionMessage("🎉 炼制成功！获得了'翠玉圣水'！液体发出幽绿色的光芒。", "success");
+                document.getElementById('potion-content').innerHTML = "翠玉圣水 - 散发着奇异的能量";
+                document.getElementById('potion-content').style.color = "#32cd32";
+            } else {
+                showPotionMessage("💥 炼制失败！液体变成了浑浊的黑色。配方似乎不对...", "error");
+                document.getElementById('potion-content').innerHTML = "失败的药剂 - 散发着恶臭";
+                document.getElementById('potion-content').style.color = "#8b4513";
+            }
+            
+            potionState.isBrewing = false;
+            brewBtn.disabled = false;
+            brewBtn.textContent = "开始炼制";
+        }
+
+        function resetPotion() {
+            if (potionState.isBrewing) {
+                showPotionMessage("正在炼制中，无法清空！", "error");
+                return;
+            }
+            
+            potionState.ingredients = [];
+            potionState.step = 0;
+            updateCauldron();
+            updateBrewingSteps();
+            showPotionMessage("坩埚已清空", "error");
+            
+            const messageDiv = document.getElementById('potion-message');
+            messageDiv.innerHTML = '';
+        }
+
+        function readFormula() {
+            showPotionMessage(`
+                《翠玉之秘》配方：<br>
+                • 处女地之泪 (泉水)<br>
+                • 夜光蘑菇<br>  
+                • 地心之火种<br><br>
+                炼制步骤必须严格按照顺序！
+            `, "success");
+        }
+
+        function showPotionMessage(message, type) {
+            const messageDiv = document.getElementById('potion-message');
+            messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+        }
+
+        // ==================== 改进的连接系统 ====================
+        function unlockConnection(fromPage, trigger) {
+            // 重置所有图标为普通状态
+            resetAllIcons();
+            
+            // 根据当前进度点亮下一个目标
+            if (fromPage === 'desk' && trigger === 'readDiary') {
+                gameProgress.desk.diaryRead = true;
+                showClueMessage('日记中提到地图标记点的重要性！现在去检查地图吧。');
+                highlightNextTarget('map');
+            }
+            else if (fromPage === 'map' && gameProgress.map.markersChecked >= 6) {
+                showClueMessage('地图异常指向家族树！去调查被除名的家族成员。');
+                highlightNextTarget('family-tree');
+            }
+            
+            // 检查是否可以前往二楼
+            checkSecondFloorAccess();
+        }
+
+        function showClueMessage(message) {
+            // 创建线索提示
+            const clueHTML = `
+                <div class="puzzle-interface" style="background: rgba(75, 0, 130, 0.95); border: 2px solid #9370db; z-index: 1000;">
+                    <div class="puzzle-title">🔍 发现线索</div>
+                    <div style="padding: 20px; font-size: 1.1em;">${message}</div>
+                    <div class="puzzle-controls">
+                        <button class="puzzle-button" onclick="this.parentElement.parentElement.remove()">继续探索</button>
+                    </div>
+                </div>
+            `;
+            
+            // 添加到页面
+            document.body.insertAdjacentHTML('beforeend', clueHTML);
+        }
+
+        function resetAllIcons() {
+            const allDots = document.querySelectorAll('.interaction-dot');
+            allDots.forEach(dot => {
+                if (dot.dataset.wallId !== 'start') {
+                    dot.style.background = 'rgba(224, 211, 184, 0.3)';
+                    dot.style.border = '2px solid #e0d3b8';
+                    dot.style.animation = 'none';
+                }
+            });
+        }
+
+        function highlightNextTarget(targetPage) {
+            const targetDot = document.querySelector(`[data-wall-id="${targetPage}"]`);
+            if (targetDot) {
+                targetDot.style.background = 'rgba(255, 215, 0, 0.5)';
+                targetDot.style.border = '2px solid #ffd700';
+                targetDot.style.animation = 'pulse 2s infinite';
+            }
+        }
+
+        function checkSecondFloorAccess() {
+            const allSolved = 
+                gameProgress.desk.diaryRead &&
+                gameProgress.map.markersChecked >= 6 &&
+                gameProgress.familyTree.secretFound &&
+                gameProgress.potionTable.recipeCompleted &&
+                gameProgress.painting.cluesFound >= 4 &&
+                gameProgress.door.unlocked;
+            
+            if (allSolved && !connectionsUnlocked.toSecondFloor) {
+                connectionsUnlocked.toSecondFloor = true;
+                showSecondFloorEntrance();
+            }
+        }
+
+        // 二楼入口函数
+        function showSecondFloorEntrance() {
+            // 在大厅添加通往二楼的入口
+            const hallView = document.getElementById('hall-view');
+            
+            // 检查是否已经存在二楼入口
+            if (document.querySelector('[data-wall-id="second-floor"]')) {
+                return;
+            }
+            
+            const secondFloorDot = document.createElement('div');
+            secondFloorDot.className = 'interaction-dot';
+            secondFloorDot.dataset.wallId = 'second-floor';
+            secondFloorDot.style.left = '50%';
+            secondFloorDot.style.top = '50%';
+            secondFloorDot.style.background = 'rgba(255, 215, 0, 0.5)';
+            secondFloorDot.style.border = '3px solid #ffd700';
+            secondFloorDot.style.width = '20px';
+            secondFloorDot.style.height = '20px';
+            
+            secondFloorDot.innerHTML = `
+                <div class="dot-tooltip" style="top: -50px; left: 50%; transform: translateX(-50%); background: rgba(255, 215, 0, 0.9); color: #000; font-weight: bold;">
+                    通往二楼
+                </div>
+            `;
+            
+            secondFloorDot.onclick = () => showSecondFloorScene();
+            hallView.appendChild(secondFloorDot);
+            
+            showClueMessage('🎉 通往二楼的通道已经打开！点击大厅中央前往二楼。');
+        }
+
+        // 二楼场景
+        function showSecondFloorScene() {
+            const closeupView = document.getElementById('closeup-view');
+            closeupView.innerHTML = '<button id="return-button">← 返回大厅</button>';
+            
+            // 设置二楼背景
+            closeupView.style.backgroundImage = `url('${IMAGES.SECOND_FLOOR}')`;
+            closeupView.style.backgroundColor = "#000";
+            
+            const secondFloorHTML = `
+                <div class="door-interface" style="background: rgba(0,0,0,0.8); max-width: 600px;">
+                    <div class="door-title">二楼 · 真相之间</div>
+                    <div class="door-subtitle">时间的尽头，命运的彼岸</div>
+                    
+                    <div style="margin: 30px 0; text-align: left; line-height: 1.6; font-size: 1.1em;">
+                        <p>你登上了庄园的二楼，这里与楼下的奢华截然不同...</p>
+                        <p>房间中央悬浮着一个漆黑的球体，它吞噬着周围的光线。</p>
+                        <p>小女儿伊莎贝拉站在黑洞边缘，喃喃自语："我必须回去...改变这一切..."</p>
+                    </div>
+                    
+                    <div class="controls-container">
+                        <button class="door-button" onclick="talkToDaughter()">与伊莎贝拉对话</button>
+                        <button class="door-button" onclick="approachBlackHole()">接近黑洞</button>
+                        <button class="door-button" onclick="observeRoom()">观察房间</button>
+                    </div>
+                    
+                    <div id="second-floor-message" style="min-height: 80px; margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            closeupView.insertAdjacentHTML('beforeend', secondFloorHTML);
+            closeupView.classList.add('active');
+            
+            // 重新绑定返回按钮
+            document.getElementById('return-button').addEventListener('click', () => {
+                closeupView.classList.remove('active');
+                closeupView.style.backgroundImage = '';
+                setTimeout(() => {
+                    document.getElementById('hall-view').style.opacity = 1;
+                }, 500);
+            });
+        }
+
+        // 二楼交互函数
+        function talkToDaughter() {
+            document.getElementById('second-floor-message').innerHTML = `
+                <div class="success-message">
+                    "你终于来了...时间不多了。"<br>
+                    "圣水不是恩赐，是诅咒。我们都被困在了时间的循环里。"<br>
+                    "只有打破七重封印，才能结束这一切..."
+                </div>
+            `;
+        }
+
+        function approachBlackHole() {
+            document.getElementById('second-floor-message').innerHTML = `
+                <div class="error-message">
+                    黑洞产生强大的引力，你无法再前进一步。<br>
+                    时间在这里变得扭曲而混乱，你能看到过去和未来的片段...
+                </div>
+            `;
+        }
+
+        function observeRoom() {
+            document.getElementById('second-floor-message').innerHTML = `
+                <div class="success-message">
+                    墙壁上刻满了奇怪的符号和方程式：<br>
+                    "E = mc² → E = mc³"<br>
+                    "时间流速：1:1000"<br>
+                    "第七代：终结或新生"
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
