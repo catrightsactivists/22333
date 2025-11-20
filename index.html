@@ -404,6 +404,21 @@
             background: rgba(120,90,60,0.9);
             transform: scale(1.05);
         }
+
+        /* 家族成员样式 */
+        .family-member {
+            text-align: center;
+            padding: 10px;
+            background: rgba(107, 142, 35, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid #6b8e23;
+            transition: all 0.3s ease;
+        }
+        .family-member:hover {
+            background: rgba(107, 142, 35, 0.5);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -442,149 +457,7 @@
         let connectionsUnlocked = {
             deskToMap: false,
             mapToFamily: false, 
-            familyToPotion: false,
-            potionToPainting: false,
-            toSecondFloor: false
-        };
-
-        // ==================== 子页面交互配置 ====================
-        const PAGE_INTERACTIONS = {
-            // 书桌页面交互
-            desk: {
-                background: IMAGES.DESK,
-                interactions: [
-                    {
-                        type: 'puzzle',
-                        element: '',
-                        action: () => showDeskPuzzle()
-                    }
-                ]
-            },
-
-            // 大门页面交互
-            door: {
-                background: IMAGES.DOOR,
-                interactions: [
-                    {
-                        type: 'puzzle',
-                        element: '',
-                        action: () => showDoorPuzzle()
-                    }
-                ]
-            },
-
-            // 油画页面交互
-            painting: {
-                background: IMAGES.PAINTING,
-                interactions: [
-                    {
-                        type: 'puzzle',
-                        element: '',
-                        action: () => showPaintingPuzzle()
-                    }
-                ]
-            },
-
-            // 地图页面交互
-            map: {
-                background: IMAGES.MAP,
-                interactions: [
-                    {
-                        type: 'puzzle',
-                        element: '',
-                        action: () => showMapPuzzle()
-                    }
-                ]
-            },
-
-            // 家族树页面交互
-            'family-tree': {
-                background: IMAGES.FAMILY_TREE,
-                interactions: [
-                    {
-                        type: 'puzzle',
-                        element: '',
-                        action: () =>showFamilyTreePuzzle()
-                    }
-                ]
-            },
-
-            // 魔药桌子页面交互
-            'potion-table': {
-                background: IMAGES.POTION_TABLE,
-                interactions: [
-                    {
-                        type: 'puzzle', 
-                        element: '',
-                        action: () => showPotionPuzzle()
-                    }
-                ]
-            }
-        };
-
-        // ==================== 墙面配置 ====================
-        const walls = [
-            { 
-                id: 'desk', 
-                name: '书桌', 
-                hint: '家主的书桌与档案',
-                position: 'north',
-                tooltipPos: 'bottom'
-            },
-            { 
-                id: 'door', 
-                name: '大门', 
-                hint: '一扇带有七个锁孔的黄铜大门',
-                position: 'northwest',
-                tooltipPos: 'bottom-right'
-            },
-            { 
-                id: 'painting', 
-                name: '油画', 
-                hint: '一幅巨大的古典油画',
-                position: 'northeast',
-                tooltipPos: 'bottom-left'
-            },
-            { 
-                id: 'map', 
-                name: '地图', 
-                hint: '以庄园为中心的世界地图',
-                position: 'east',
-                tooltipPos: 'left'
-            },
-            { 
-                id: 'family-tree', 
-                name: '家族树', 
-                hint: '一份被污损的家族谱系',
-                position: 'southeast',
-                tooltipPos: 'top-left'
-            },
-            { 
-                id: 'potion-table', 
-                name: '魔药桌子', 
-                hint: '炼金术工作台与手稿',
-                position: 'south',
-                tooltipPos: 'top'
-            },
-            { 
-                id: 'start', 
-                name: '开始游戏', 
-                hint: '点击这里开始探索',
-                position: 'southwest',
-                tooltipPos: 'top-right',
-                isStart: true
-            }
-        ];
-
-        // ==================== 工具函数 ====================
-        function getPosition(position) {
-            const radius = 40;
-            switch(position) {
-                case 'north': return { x: 50, y: 50 - radius };
-                case 'northeast': return { x: 50 + radius * 0.707, y: 50 - radius * 0.707 };
-                case 'east': return { x: 50 + radius, y: 50 };
-                case 'southeast': return { x: 50 + radius * 0.707, y: 50 + radius * 0.707 };
-                case 'south': return { x: 50, y: 50 + radius };
+                            50 + radius };
                 case 'southwest': return { x: 50 - radius * 0.707, y: 50 + radius * 0.707 };
                 case 'west': return { x: 50 - radius, y: 50 };
                 case 'northwest': return { x: 50 - radius * 0.707, y: 50 - radius * 0.707 };
@@ -1338,16 +1211,16 @@
                         <!-- 庄园位置 -->
                         <div class="map-point" style="top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #d4af37;" 
                              onclick="inspectManor()" title="黑水庄园">
-                            ★
+                            星标
                         </div>
                         
                         <!-- 六个标记点 -->
-                        <div class="map-point" style="top: 20%; left: 70%;" onclick="inspectPoint('欧洲')" title="欧洲">Ⅰ</div>
-                        <div class="map-point" style="top: 40%; left: 85%;" onclick="inspectPoint('亚洲')" title="亚洲">Ⅱ</div>
-                        <div class="map-point" style="top: 70%; left: 80%;" onclick="inspectPoint('大洋洲')" title="大洋洲">Ⅲ</div>
-                        <div class="map-point" style="top: 80%; left: 40%;" onclick="inspectPoint('南美洲')" title="南美洲">Ⅳ</div>
-                        <div class="map-point" style="top: 40%; left: 15%;" onclick="inspectPoint('北美洲')" title="北美洲">Ⅴ</div>
-                        <div class="map-point" style="top: 20%; left: 30%;" onclick="inspectPoint('非洲')" title="非洲">Ⅵ</div>
+                        <div class="map-point" style="top: 20%; left: 70%;" onclick="inspectPoint('欧洲')" title="欧洲">一</div>
+                        <div class="map-point" style="top: 40%; left: 85%;" onclick="inspectPoint('亚洲')" title="亚洲">二</div>
+                        <div class="map-point" style="top: 70%; left: 80%;" onclick="inspectPoint('大洋洲')" title="大洋洲">三</div>
+                        <div class="map-point" style="top: 80%; left: 40%;" onclick="inspectPoint('南美洲')" title="南美洲">四</div>
+                        <div class="map-point" style="top: 40%; left: 15%;" onclick="inspectPoint('北美洲')" title="北美洲">五</div>
+                        <div class="map-point" style="top: 20%; left: 30%;" onclick="inspectPoint('非洲')" title="非洲">六</div>
                     </div>
 
                     <div class="controls-container">
